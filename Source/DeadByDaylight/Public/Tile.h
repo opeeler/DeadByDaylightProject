@@ -1,116 +1,77 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EBasementType.h"
-#include "EQuadrantSpawnType.h"
-#include "UObject/NoExportTypes.h"
-#include "EPathType.h"
-#include "EscapeStrategyType.h"
-#include "ETileType.h"
-#include "EDensity.h"
-#include "UObject/NoExportTypes.h"
+#include "Enums.h"
+#include "TileSpawnPoint.h"
+#include "ActorSpawner.h"
 #include "Tile.generated.h"
 
-class UTileSpawnPoint;
-class UObjectRandomizer;
-class UActorSpawner;
-class UActorVariationSpawner;
+UCLASS(Blueprintable, BlueprintType)
+class DEADBYDAYLIGHT_API ATile : public AActor
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MinimumSpacing;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MaximumSpacing;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MaximumCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D Dimension;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<EscapeStrategyType> AvailableEscapeTypes;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		ETileType Type;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EDensity Density;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EPathType Path;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Number;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool PlaceHolder;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SpawnPriorityTier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Weight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D Coord;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) //Assuming type is UTileSpawnPoint, but SDK only shows its parent UActorComponent
+		TArray<UTileSpawnPoint*> SpawnPointsCache;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UActorComponent*> ObjectRandomizersCache;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UActorSpawner*> ActorSpawnersCache; //Assuming type is UActorSpawner, but SDK only shows its parent UActorComponent
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UActorComponent*> ActorVariationSpawnersCache;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FRandomStream SharedTileRandomizer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool _initialized;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool TypeSpacing;
+	
+	UFUNCTION(BlueprintCallable)
+	void OnSetSpawnObject(UTileSpawnPoint* TileSpawnPoint, AActor* spawnedObject);
+	UFUNCTION(BlueprintCallable)
+	void OnRep_Initialized(bool oldValue);
+	UFUNCTION(BlueprintCallable)
+	void InitOnSpawned();
 
-UCLASS()
-class DEADBYDAYLIGHT_API ATile : public AActor {
-    GENERATED_BODY()
-public:
-    UPROPERTY(EditAnywhere)
-    bool RerunConstructionScript;
-    
-    UPROPERTY(EditAnywhere)
-    int32 MinimumSpacing;
-    
-    UPROPERTY(EditAnywhere)
-    int32 MaximumSpacing;
-    
-    UPROPERTY(EditAnywhere)
-    bool DiagonalSpacing;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    bool TypeSpacing;
-    
-    UPROPERTY(EditAnywhere)
-    int32 MaximumCount;
-    
-    UPROPERTY(EditAnywhere)
-    FVector2D Dimension;
-    
-    UPROPERTY(EditAnywhere)
-    TArray<EscapeStrategyType> AvailableEscapeTypes;
-    
-    UPROPERTY(EditAnywhere)
-    ETileType Type;
-    
-    UPROPERTY(EditAnywhere)
-    EDensity Density;
-    
-    UPROPERTY(EditAnywhere)
-    EPathType Path;
-    
-    UPROPERTY(EditAnywhere)
-    int32 Number;
-    
-    UPROPERTY(EditAnywhere)
-    bool PlaceHolder;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    int32 SpawnPriorityTier;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float Weight;
-    
-    UPROPERTY(EditAnywhere)
-    FVector2D Coord;
-    
-    UPROPERTY(EditAnywhere)
-    EQuadrantSpawnType QuadrantSpawnType;
-    
-    UPROPERTY(EditAnywhere)
-    EBasementType BasementType;
-    
-    UPROPERTY(Export, Transient)
-    TArray<UTileSpawnPoint*> SpawnPointsCache;
-    
-    UPROPERTY(Export, Transient)
-    TArray<UObjectRandomizer*> ObjectRandomizersCache;
-    
-    UPROPERTY(Export, Transient)
-    TArray<UActorSpawner*> ActorSpawnersCache;
-    
-    UPROPERTY(Export, Transient)
-    TArray<UActorVariationSpawner*> ActorVariationSpawnersCache;
-    
-    UPROPERTY(BlueprintReadOnly)
-    FRandomStream SharedTileRandomizer;
-    
+public:	
+	// Sets default values for this actor's properties
+	ATile();
+
 protected:
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_Initialized)
-    bool _initialized;
-    
-public:
-    ATile();
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnSetSpawnObject(UTileSpawnPoint* tileSpawnPoint, AActor* spawnedObject);
-    
-protected:
-    UFUNCTION()
-    void OnRep_Initialized(bool oldValue);
-    
-public:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnAllTileSpawned();
-    
-protected:
-    UFUNCTION(BlueprintImplementableEvent)
-    void InitOnSpawned();
-    
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 };
-

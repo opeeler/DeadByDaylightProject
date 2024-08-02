@@ -1,212 +1,147 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
-#include "Templates/SubclassOf.h"
-#include "GameEventData.h"
 #include "BaseModifierContainer.h"
-#include "ModifierTickableConditionReplicatedData.h"
+#include "TimerObject.h"
 #include "GameplayTagContainer.h"
-#include "EDBDScoreTypes.h"
-#include "EInventoryItemType.h"
-#include "StatusViewSource.h"
+#include "BaseModifierCondition.h"
+#include "Enums.h"
+//#include "Structs.h"
 #include "GameplayModifierContainer.generated.h"
 
-class UTimerObject;
-class AActor;
-class ADBDPlayer;
-class UGameplayModifierContainer;
-class UBaseModifierCondition;
-
-UCLASS(meta=(BlueprintSpawnableComponent))
-class DEADBYDAYLIGHT_API UGameplayModifierContainer : public UBaseModifierContainer {
+USTRUCT(BlueprintType)
+struct FFloat_NetQuantize8 {
     GENERATED_BODY()
-public:
-protected:
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_TickableConditionsData)
-    FModifierTickableConditionReplicatedData _tickableConditionsData;
-    
-    UPROPERTY(Transient)
-    TArray<FName> _tags;
-    
-    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-    bool UseApplyFunction;
-    
-    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-    bool BroadcastStatusView;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    FName StatusViewID;
-    
-    UPROPERTY(EditDefaultsOnly)
-    bool _autoInitializeOnBeginPlay;
-    
-    UPROPERTY(EditDefaultsOnly)
-    bool _canOptimizeTickActivation;
-    
-private:
-    UPROPERTY(Export, Transient, ReplicatedUsing=OnRep_ActivationTimer)
-    UTimerObject* _activationTimer;
-    
-public:
-    UGameplayModifierContainer();
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
-    UFUNCTION(BlueprintCallable)
-    void UpdateIsApplicable();
-    
-protected:
-    UFUNCTION(BlueprintCallable)
-    void UnlistenToGameEvent(EDBDScoreTypes eventType);
-    
-    UFUNCTION(BlueprintCallable)
-    void UnlistenToDispatcherGameEvent(FGameplayTag eventType);
-    
-    UFUNCTION(BlueprintCallable)
-    void UnlistenToAllGameEvents();
-    
-    UFUNCTION(BlueprintCallable)
-    void UnlistenToAllDispatcherGameEvents();
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void SetUseApplyFunction(bool use);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetModifierValue(FGameplayTag type, float GameplayModifierValue);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetFlag(FGameplayTag flag, bool flagValue);
-    
-    UFUNCTION(BlueprintCallable)
-    void RemoveModifier(FGameplayTag type);
-    
-    UFUNCTION(BlueprintCallable)
-    void RemoveAllModifiers();
-    
-    UFUNCTION(BlueprintCallable)
-    void RemoveAllFlags();
-    
-protected:
-    UFUNCTION()
-    void OnRep_TickableConditionsData();
-    
-private:
-    UFUNCTION()
-    void OnRep_ActivationTimer();
-    
-protected:
-    UFUNCTION(BlueprintNativeEvent)
-    void OnListenedGameEvent(EDBDScoreTypes eventType, float amount, AActor* instigator, AActor* target);
-    
-    UFUNCTION(BlueprintNativeEvent)
-    void OnLevelReadyToPlay();
-    
-public:
-    UFUNCTION()
-    void OnInitialized_Internal();
-    
-    UFUNCTION(BlueprintNativeEvent)
-    void OnInitialized();
-    
-protected:
-    UFUNCTION()
-    void OnGameplayEvent(EDBDScoreTypes eventType, float amount, AActor* instigator, AActor* target);
-    
-    UFUNCTION(BlueprintNativeEvent)
-    void OnGameEventDispatched(const FGameplayTag gameEventType, const FGameEventData& gameEventData);
-    
-public:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnApplyEnd();
-    
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnApplyBegin();
-    
-protected:
-    UFUNCTION(BlueprintCallable)
-    void ListenToGameEvent(EDBDScoreTypes eventType);
-    
-    UFUNCTION(BlueprintCallable)
-    void ListenToDispatcherGameEvent(FGameplayTag eventType);
-    
-    UFUNCTION(BlueprintNativeEvent)
-    bool IsStatusViewActive() const;
-    
-public:
-    UFUNCTION(BlueprintPure)
-    bool IsActivationTimerDone() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsActivationTimerActive() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasModifierOfType(FGameplayTag type) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasFlag(FGameplayTag flag) const;
-    
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-    float GetRemainingLifetime() const;
-    
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-    float GetPercentageFill() const;
-    
-    UFUNCTION(BlueprintPure)
-    ADBDPlayer* GetOwningPlayer() const;
-    
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-    UGameplayModifierContainer* GetOriginatingEffect() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetModifierValue(FGameplayTag type) const;
-    
-    UFUNCTION(BlueprintPure)
-    int32 GetLevelToDisplay() const;
-    
-    UFUNCTION(BlueprintPure)
-    EInventoryItemType GetInventoryItemType() const;
-    
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-    int32 GetIconFilePathIndex() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetActivationTimerRemainingTime() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetActivationTimerPercentRemaining() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetActivationTimerElapsedTimePercent() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetActivationTimerElapsedTime() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetActivationTimerDuration() const;
-    
-protected:
-    UFUNCTION(BlueprintCallable, BlueprintPure=false)
-    void FireActiveStatusViewEvent(FName NewStatusViewID, FName uniqueSourceID, const FStatusViewSource statusViewSource) const;
-    
-public:
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_TriggerActivationTimer(float activationTime);
-    
-protected:
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_SetActivationTimerPaused(const bool paused);
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void Authority_InstantiateGameplayModifierConditions();
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_ClearActivationTimer();
-    
-    UFUNCTION(BlueprintImplementableEvent)
-    void Apply(float DeltaTime);
-    
-    UFUNCTION(BlueprintCallable)
-    UBaseModifierCondition* AddCondition(TSubclassOf<UBaseModifierCondition> conditionType);
-    
+        UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        float _value;
+    unsigned char UD[4];
 };
 
+USTRUCT(BlueprintType)
+struct FDBDTimer {
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        float _startTime;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool _startTimeDirty;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FFloat_NetQuantize8 _timeLeft;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool _replicateTimeLeft;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        float _interpSpeed;
+};
+
+/**
+ * 
+ */
+UCLASS()
+class DEADBYDAYLIGHT_API UGameplayModifierContainer : public UBaseModifierContainer
+{
+	GENERATED_BODY()
+public:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FName ID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool UseApplyFunction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UBaseModifierContainer*> _conditionsInner;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FName> _tags;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UTimerObject* _activationTimer;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FDBDTimer HUDIconTimer;
+
+
+
+    UFUNCTION(BlueprintCallable)
+	void UpdateIsApplicable();
+	UFUNCTION(BlueprintCallable)
+	void UpdateActivationTimer();
+	UFUNCTION(BlueprintCallable)
+	void UnlistenToGameEvent(EDBDScoreTypes EventType);
+	UFUNCTION(BlueprintCallable)
+	void UnlistenToDispatcherGameEvent(FGameplayTag EventType);
+	UFUNCTION(BlueprintCallable)
+	void UnlistenToAllGameEvents();
+	UFUNCTION(BlueprintCallable)
+	void UnlistenToAllDispatcherGameEvents();
+	UFUNCTION(BlueprintCallable)
+	void TriggerActivationTimer(float activationTime);
+	UFUNCTION(BlueprintCallable)
+	void SetStatusView(bool broadcastStatusView, FName StatusViewID);
+	UFUNCTION(BlueprintCallable)
+	void SetModifierValue(FGameplayTag Type, float GameplayModifierValue);
+	UFUNCTION(BlueprintCallable)
+	void SetFlag(FGameplayTag flag, bool flagValue);
+	UFUNCTION(BlueprintCallable)
+	void RemoveModifier(FGameplayTag Type);
+	UFUNCTION(BlueprintCallable)
+	void RemoveAllModifiers();
+	UFUNCTION(BlueprintCallable)
+	void RemoveAllFlags();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_ConditionsInner();
+	UFUNCTION(BlueprintCallable)
+	void OnListenedGameEvent(EDBDScoreTypes EventType, float amount, AActor* Instigator, AActor* Target);
+	UFUNCTION(BlueprintCallable)
+	void OnLevelReadyToPlay();
+	UFUNCTION(BlueprintCallable)
+	void OnInitialized_Internal();
+	UFUNCTION(BlueprintCallable)
+	void OnInitialized();
+	UFUNCTION(BlueprintCallable)
+	void OnGameplayEvent(EDBDScoreTypes EventType, float amount, AActor* Instigator, AActor* Target);
+	UFUNCTION(BlueprintCallable)
+	void OnGameEventDispatched(FGameplayTag gameEventType, FGameEventData GameEventData);
+	UFUNCTION(BlueprintCallable)
+	void OnApplyEnd();
+	UFUNCTION(BlueprintCallable)
+	void OnApplyBegin();
+	UFUNCTION(BlueprintCallable)
+	void ListenToGameEvent(EDBDScoreTypes EventType);
+	UFUNCTION(BlueprintCallable)
+	void ListenToDispatcherGameEvent(FGameplayTag EventType);
+	UFUNCTION(BlueprintCallable)
+	bool IsStatusViewActive();
+	UFUNCTION(BlueprintCallable)
+	bool IsActivationTimerActive();
+	UFUNCTION(BlueprintCallable)
+	void InstantiateGameplayModifierConditions();
+	UFUNCTION(BlueprintCallable)
+	bool HasModifierOfType(FGameplayTag Type);
+	UFUNCTION(BlueprintCallable)
+	bool HasFlag(FGameplayTag flag);
+	UFUNCTION(BlueprintCallable)
+	float GetRemainingLifetime();
+	UFUNCTION(BlueprintCallable)
+	float GetPercentageFill();
+	UFUNCTION(BlueprintCallable)
+	class ADBDPlayer* GetOwningPlayer();
+	UFUNCTION(BlueprintCallable)
+	UGameplayModifierContainer* GetOriginatingEffect();
+	UFUNCTION(BlueprintCallable)
+	float GetModifierValue(FGameplayTag Type);
+	UFUNCTION(BlueprintCallable)
+	int GetLevelToDisplay();
+	UFUNCTION(BlueprintCallable)
+	EInventoryItemType GetInventoryItemType();
+	UFUNCTION(BlueprintCallable)
+	int GetIconFilePathIndex();
+	UFUNCTION(BlueprintCallable)
+	float GetActivationTimerRemainingTime();
+	UFUNCTION(BlueprintCallable)
+	float GetActivationTimerPercentRemaining();
+	UFUNCTION(BlueprintCallable)
+	float GetActivationTimerElapsedTimePercent();
+	UFUNCTION(BlueprintCallable)
+	void FireActiveStatusViewEvent(FName StatusViewID, FName uniqueSourceID, FStatusViewSource StatusViewSource);
+	UFUNCTION(BlueprintCallable)
+	void Apply(float DeltaTime);
+	UFUNCTION(BlueprintCallable)
+	UBaseModifierCondition* AddCondition(UClass* conditionType);
+};

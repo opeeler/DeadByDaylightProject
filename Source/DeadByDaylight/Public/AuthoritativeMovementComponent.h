@@ -1,51 +1,28 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Engine/EngineTypes.h"
 #include "AuthoritativeMovementComponent.generated.h"
 
-class AActor;
-class ACharacter;
-class UPrimitiveComponent;
-class UCapsuleComponent;
 
-UCLASS(BlueprintType, meta=(BlueprintSpawnableComponent))
-class DEADBYDAYLIGHT_API UAuthoritativeMovementComponent : public UActorComponent {
-    GENERATED_BODY()
-public:
-private:
-    UPROPERTY(Transient)
-    TArray<ACharacter*> _charactersToPush;
-    
-    UPROPERTY(Transient)
-    TArray<ACharacter*> _stopIgnoreCharacterOnEndOverlap;
-    
-    UPROPERTY(Export, Transient)
-    UCapsuleComponent* _pawnDetector;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_AuthoritativeIgnoreOverlapCharacters)
-    TArray<ACharacter*> _authoritativeIgnoreOverlapCharacters;
-    
-    UPROPERTY(Transient)
-    TArray<ACharacter*> _previousAuthoritativeIgnoreOverlapCharacters;
-    
-public:
-    UAuthoritativeMovementComponent();
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
-    UFUNCTION(BlueprintCallable)
-    void SetPawnDetector(UCapsuleComponent* pawnDetector);
-    
-private:
-    UFUNCTION()
-    void OnRep_AuthoritativeIgnoreOverlapCharacters();
-    
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class DEADBYDAYLIGHT_API UAuthoritativeMovementComponent : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+	// Sets default values for this component's properties
+	UAuthoritativeMovementComponent();
+
 protected:
-    UFUNCTION()
-    void OnPawnDetectorOverlapExit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-    
-    UFUNCTION()
-    void OnPawnDetectorOverlapEnter(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-    
-};
+	// Called when the game starts
+	virtual void BeginPlay() override;
 
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+		
+};

@@ -1,81 +1,46 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "OnCustomizationChangedDelegate.h"
-#include "UObject/NoExportTypes.h"
-#include "GameplayTagContainer.h"
-#include "UObject/NoExportTypes.h"
-#include "Engine/EngineTypes.h"
 #include "DBDBasePlayer.generated.h"
 
-class UCustomizedAudioComponent;
-class UBaseGroundDetectorComponent;
-class UAkComponent;
-
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCustomizationChanged); 
 UCLASS()
-class DEADBYDAYLIGHT_API ADBDBasePlayer : public ACharacter {
-    GENERATED_BODY()
-public:
-    UPROPERTY(BlueprintAssignable)
-    FOnCustomizationChanged OnCustomizationChanged;
-    
-protected:
-    UPROPERTY(EditDefaultsOnly)
-    FGameplayTagContainer _semanticGameplayTags;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UBaseGroundDetectorComponent* _leftFootGroundDetector;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UBaseGroundDetectorComponent* _rightFootGroundDetector;
-    
-private:
-    UPROPERTY(EditAnywhere)
-    int32 _characterIndex;
-    
-public:
-    ADBDBasePlayer();
-    UFUNCTION(BlueprintCallable)
-    bool TeleportWithClothHandling(const FVector& location, const FRotator& rotation, bool checkCollisions);
-    
-protected:
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SwapCosmetics(FName cosmeticId);
-    
-public:
-    UFUNCTION(BlueprintPure)
-    bool GetShowBlindDebugInfo() const;
-    
-    UFUNCTION(BlueprintPure)
-    FGameplayTagContainer GetSemanticTag() const;
-    
-    UFUNCTION(BlueprintPure)
-    TEnumAsByte<EPhysicalSurface> GetRightFootSurfaceType() const;
-    
-    UFUNCTION(BlueprintPure)
-    FString GetRightFootAudioSurfaceName() const;
-    
-    UFUNCTION(BlueprintPure)
-    TEnumAsByte<EPhysicalSurface> GetLeftFootSurfaceType() const;
-    
-    UFUNCTION(BlueprintPure)
-    FString GetLeftFootAudioSurfaceName() const;
-    
-    UFUNCTION(BlueprintPure)
-    UCustomizedAudioComponent* GetCustomizedAudio() const;
-    
-    UFUNCTION(BlueprintPure)
-    FName GetCharacterName() const;
-    
-    UFUNCTION(BlueprintPure)
-    int32 GetCharacterIndex() const;
-    
-    UFUNCTION(BlueprintPure)
-    UAkComponent* GetAudioComponent() const;
-    
-protected:
-    UFUNCTION(Exec)
-    void DBD_SwapCosmetics(FName cosmeticId);
-    
-};
+class DEADBYDAYLIGHT_API ADBDBasePlayer : public ACharacter
+{
+	GENERATED_BODY()
 
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) //doubt this is correct
+	FOnCustomizationChanged OnCustomizationChanged;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
+	int32 _characterIndex;
+	// Sets default values for this character's properties
+	ADBDBasePlayer();
+
+
+	UFUNCTION(BlueprintCallable)
+	bool TeleportWithClothHandling(struct FVector Location, struct FRotator Rotation, bool checkCollisions);
+	UFUNCTION(BlueprintCallable)
+	bool GetShowBlindDebugInfo();
+	UFUNCTION(BlueprintCallable)
+	FName GetCharacterName();
+	UFUNCTION(BlueprintCallable)
+	int GetCharacterIndex();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+};

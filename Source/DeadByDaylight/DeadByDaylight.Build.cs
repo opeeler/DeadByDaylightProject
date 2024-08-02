@@ -1,75 +1,23 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 using UnrealBuildTool;
 
-public class DeadByDaylight : ModuleRules {
-    public DeadByDaylight(ReadOnlyTargetRules Target) : base(Target) {
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        bLegacyPublicIncludePaths = false;
-        ShadowVariableWarningLevel = WarningLevel.Warning;
-        
-        PublicDependencyModuleNames.AddRange(new string[] {
-            "AIModule",
-            "Activation",
-            "AkAudio",
-            "AnimationUtilities",
-            "AudioExtensions",
-            "AudioMixer",
-            "Competence",
-            "Core",
-            "CoreUObject",
-            "CoreUtilities",
-            "Customization",
-            "DBDAudio",
-            "DBDInput",
-            "DBDSharedTypes",
-            "DBDUIViewInterfaces",
-            "DBDUIViewsMobile",
-            "DataTableUtilities",
-            "Engine",
-            "Foliage",
-            "GFXUtilities",
-            "GameSessionDS",
-            "GameflowNotifications",
-            "GameplayTagUtilities",
-            "GameplayTags",
-            "GameplayTasks",
-            "GameplayUtilities",
-            "InputCore",
-            "InputUtilities",
-            "Interaction",
-            "MediaAssets",
-            "MediaUtils",
-            "MovieScene",
-            "MovieSceneTracks",
-            "NavigationSystem",
-            "NetworkUtilities",
-            "Niagara",
-            "NiagaraCore",
-            "NiagaraShader",
-            "OnlineMessagesUtilities",
-            "OnlinePresence",
-            "OnlineSubsystem",
-            "OnlineSubsystemUtils",
-            "OnlineTransactions",
-            "Paper2D",
-            "Penalty",
-            "PhysicsUtilities",
-            "PlatformsProviders",
-            "Projectile",
-            "PropertyPath",
-            "QueryService",
-            "ReversibleActionSystem",
-            "RewardUtilities",
-            "ScaleformUI",
-            "SharedAuthenticationUtilities",
-            "Slate",
-            "SlateCore",
-            "SocialParty",
-            "StatSystem",
-            "SystemUtilities",
-            "TimeUtilities",
-            "Toasts",
-            "UMG",
-            "VFXUtilities",
-        });
-    }
+public class DeadByDaylight : ModuleRules
+{
+	public DeadByDaylight(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+	
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags"});
+
+		PrivateDependencyModuleNames.AddRange(new string[] {  });
+
+		// Uncomment if you are using Slate UI
+		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		
+		// Uncomment if you are using online features
+		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+
+		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+	}
 }

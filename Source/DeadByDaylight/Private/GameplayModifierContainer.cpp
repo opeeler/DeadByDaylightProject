@@ -1,181 +1,47 @@
+// Fill out your copyright notice in the Description page of Project Settings.
 #include "GameplayModifierContainer.h"
-#include "Net/UnrealNetwork.h"
-#include "Templates/SubclassOf.h"
-
-class AActor;
-class ADBDPlayer;
-class UGameplayModifierContainer;
-class UBaseModifierCondition;
-
-void UGameplayModifierContainer::UpdateIsApplicable() {
-}
-
-void UGameplayModifierContainer::UnlistenToGameEvent(EDBDScoreTypes eventType) {
-}
-
-void UGameplayModifierContainer::UnlistenToDispatcherGameEvent(FGameplayTag eventType) {
-}
-
-void UGameplayModifierContainer::UnlistenToAllGameEvents() {
-}
-
-void UGameplayModifierContainer::UnlistenToAllDispatcherGameEvents() {
-}
-
-void UGameplayModifierContainer::SetUseApplyFunction(bool use) {
-}
-
-void UGameplayModifierContainer::SetModifierValue(FGameplayTag type, float GameplayModifierValue) {
-}
-
-void UGameplayModifierContainer::SetFlag(FGameplayTag flag, bool flagValue) {
-}
-
-void UGameplayModifierContainer::RemoveModifier(FGameplayTag type) {
-}
-
-void UGameplayModifierContainer::RemoveAllModifiers() {
-}
-
-void UGameplayModifierContainer::RemoveAllFlags() {
-}
-
-void UGameplayModifierContainer::OnRep_TickableConditionsData() {
-}
-
-void UGameplayModifierContainer::OnRep_ActivationTimer() {
-}
-
-void UGameplayModifierContainer::OnListenedGameEvent_Implementation(EDBDScoreTypes eventType, float amount, AActor* instigator, AActor* target) {
-}
-
-void UGameplayModifierContainer::OnLevelReadyToPlay_Implementation() {
-}
-
-void UGameplayModifierContainer::OnInitialized_Internal() {
-}
-
-void UGameplayModifierContainer::OnInitialized_Implementation() {
-}
-
-void UGameplayModifierContainer::OnGameplayEvent(EDBDScoreTypes eventType, float amount, AActor* instigator, AActor* target) {
-}
-
-void UGameplayModifierContainer::OnGameEventDispatched_Implementation(const FGameplayTag gameEventType, const FGameEventData& gameEventData) {
-}
 
 
-
-void UGameplayModifierContainer::ListenToGameEvent(EDBDScoreTypes eventType) {
-}
-
-void UGameplayModifierContainer::ListenToDispatcherGameEvent(FGameplayTag eventType) {
-}
-
-bool UGameplayModifierContainer::IsStatusViewActive_Implementation() const {
-    return false;
-}
-
-bool UGameplayModifierContainer::IsActivationTimerDone() const {
-    return false;
-}
-
-bool UGameplayModifierContainer::IsActivationTimerActive() const {
-    return false;
-}
-
-bool UGameplayModifierContainer::HasModifierOfType(FGameplayTag type) const {
-    return false;
-}
-
-bool UGameplayModifierContainer::HasFlag(FGameplayTag flag) const {
-    return false;
-}
-
-float UGameplayModifierContainer::GetRemainingLifetime_Implementation() const {
-    return 0.0f;
-}
-
-float UGameplayModifierContainer::GetPercentageFill_Implementation() const {
-    return 0.0f;
-}
-
-ADBDPlayer* UGameplayModifierContainer::GetOwningPlayer() const {
-    return NULL;
-}
-
-UGameplayModifierContainer* UGameplayModifierContainer::GetOriginatingEffect_Implementation() const {
-    return NULL;
-}
-
-float UGameplayModifierContainer::GetModifierValue(FGameplayTag type) const {
-    return 0.0f;
-}
-
-int32 UGameplayModifierContainer::GetLevelToDisplay() const {
-    return 0;
-}
-
-EInventoryItemType UGameplayModifierContainer::GetInventoryItemType() const {
-    return EInventoryItemType::None;
-}
-
-int32 UGameplayModifierContainer::GetIconFilePathIndex_Implementation() const {
-    return 0;
-}
-
-float UGameplayModifierContainer::GetActivationTimerRemainingTime() const {
-    return 0.0f;
-}
-
-float UGameplayModifierContainer::GetActivationTimerPercentRemaining() const {
-    return 0.0f;
-}
-
-float UGameplayModifierContainer::GetActivationTimerElapsedTimePercent() const {
-    return 0.0f;
-}
-
-float UGameplayModifierContainer::GetActivationTimerElapsedTime() const {
-    return 0.0f;
-}
-
-float UGameplayModifierContainer::GetActivationTimerDuration() const {
-    return 0.0f;
-}
-
-void UGameplayModifierContainer::FireActiveStatusViewEvent(FName NewStatusViewID, FName uniqueSourceID, const FStatusViewSource statusViewSource) const {
-}
-
-void UGameplayModifierContainer::Authority_TriggerActivationTimer(float activationTime) {
-}
-
-void UGameplayModifierContainer::Authority_SetActivationTimerPaused(const bool paused) {
-}
-
-void UGameplayModifierContainer::Authority_InstantiateGameplayModifierConditions() {
-}
-
-void UGameplayModifierContainer::Authority_ClearActivationTimer() {
-}
-
-
-UBaseModifierCondition* UGameplayModifierContainer::AddCondition(TSubclassOf<UBaseModifierCondition> conditionType) {
-    return NULL;
-}
-
-void UGameplayModifierContainer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
-    DOREPLIFETIME(UGameplayModifierContainer, _tickableConditionsData);
-    DOREPLIFETIME(UGameplayModifierContainer, _activationTimer);
-}
-
-UGameplayModifierContainer::UGameplayModifierContainer() {
-    this->UseApplyFunction = false;
-    this->BroadcastStatusView = false;
-    this->_autoInitializeOnBeginPlay = true;
-    this->_canOptimizeTickActivation = false;
-    this->_activationTimer = NULL;
-}
-
+void UGameplayModifierContainer::UpdateIsApplicable(){}
+void UGameplayModifierContainer::UpdateActivationTimer(){}
+void UGameplayModifierContainer::UnlistenToGameEvent(EDBDScoreTypes EventType){}
+void UGameplayModifierContainer::UnlistenToDispatcherGameEvent(FGameplayTag EventType){}
+void UGameplayModifierContainer::UnlistenToAllGameEvents(){}
+void UGameplayModifierContainer::UnlistenToAllDispatcherGameEvents(){}
+void UGameplayModifierContainer::TriggerActivationTimer(float activationTime){}
+void UGameplayModifierContainer::SetStatusView(bool broadcastStatusView, FName StatusViewID){}
+void UGameplayModifierContainer::SetModifierValue(FGameplayTag Type, float GameplayModifierValue){}
+void UGameplayModifierContainer::SetFlag(FGameplayTag flag, bool flagValue){}
+void UGameplayModifierContainer::RemoveModifier(FGameplayTag Type){}
+void UGameplayModifierContainer::RemoveAllModifiers(){}
+void UGameplayModifierContainer::RemoveAllFlags(){}
+void UGameplayModifierContainer::OnRep_ConditionsInner(){}
+void UGameplayModifierContainer::OnListenedGameEvent(EDBDScoreTypes EventType, float amount, AActor* Instigator, AActor* Target){}
+void UGameplayModifierContainer::OnLevelReadyToPlay(){}
+void UGameplayModifierContainer::OnInitialized_Internal(){}
+void UGameplayModifierContainer::OnInitialized(){}
+void UGameplayModifierContainer::OnGameplayEvent(EDBDScoreTypes EventType, float amount, AActor* Instigator, AActor* Target){}
+void UGameplayModifierContainer::OnGameEventDispatched( FGameplayTag gameEventType, FGameEventData GameEventData){}
+void UGameplayModifierContainer::OnApplyEnd(){}
+void UGameplayModifierContainer::OnApplyBegin(){}
+void UGameplayModifierContainer::ListenToGameEvent(EDBDScoreTypes EventType){}
+void UGameplayModifierContainer::ListenToDispatcherGameEvent(FGameplayTag EventType){}
+bool UGameplayModifierContainer::IsStatusViewActive(){return false;}
+bool UGameplayModifierContainer::IsActivationTimerActive(){return false;}
+void UGameplayModifierContainer::InstantiateGameplayModifierConditions(){}
+bool UGameplayModifierContainer::HasModifierOfType(FGameplayTag Type){return false;}
+bool UGameplayModifierContainer::HasFlag(FGameplayTag flag){return false;}
+float UGameplayModifierContainer::GetRemainingLifetime(){return 0;}
+float UGameplayModifierContainer::GetPercentageFill(){return 0;}
+ADBDPlayer* UGameplayModifierContainer::GetOwningPlayer(){return nullptr;}
+UGameplayModifierContainer* UGameplayModifierContainer::GetOriginatingEffect(){return nullptr;}
+float UGameplayModifierContainer::GetModifierValue( FGameplayTag Type){return 0;}
+int UGameplayModifierContainer::GetLevelToDisplay(){return 0;}
+EInventoryItemType UGameplayModifierContainer::GetInventoryItemType(){return EInventoryItemType::None;}
+int UGameplayModifierContainer::GetIconFilePathIndex(){return 0;}
+float UGameplayModifierContainer::GetActivationTimerRemainingTime(){return 0;}
+float UGameplayModifierContainer::GetActivationTimerPercentRemaining(){return 0;}
+float UGameplayModifierContainer::GetActivationTimerElapsedTimePercent(){return 0;}
+void UGameplayModifierContainer::FireActiveStatusViewEvent(FName StatusViewID, FName uniqueSourceID, FStatusViewSource StatusViewSource){}
+void UGameplayModifierContainer::Apply(float DeltaTime){}
+UBaseModifierCondition* UGameplayModifierContainer::AddCondition(UClass* conditionType){return nullptr;}

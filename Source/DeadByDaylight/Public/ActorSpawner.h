@@ -1,83 +1,73 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "ActorSpawnedDelegateDelegate.h"
-#include "WeightedElement.h"
-#include "SpawnElement.h"
-#include "EGameplayElementType.h"
-#include "ActorSpawnerProperties.h"
+#include "Enums.h"
+#include "Structs.h"
 #include "ActorSpawner.generated.h"
 
-class AActor;
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAsyncActorSpawned);
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class DEADBYDAYLIGHT_API UActorSpawner : public USceneComponent
+{
+	GENERATED_BODY()
 
-UCLASS(BlueprintType, meta=(BlueprintSpawnableComponent))
-class DEADBYDAYLIGHT_API UActorSpawner : public USceneComponent, public IWeightedElement, public ISpawnElement {
-    GENERATED_BODY()
-public:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    EGameplayElementType Type;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    TSoftClassPtr<AActor> Visualization;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    bool ActivatedByDefault;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    TArray<FActorSpawnerProperties> ActivatedSceneElement;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    TArray<FActorSpawnerProperties> DeactivatedSceneElement;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float Weight;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    int32 SpawnCountMax;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    int32 SpawnPriorityTier;
-    
-    UPROPERTY(BlueprintAssignable)
-    FActorSpawnedDelegate OnAsyncActorSpawned;
-    
-private:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(AllowPrivateAccess=true))
-    bool WeightInfluenceable;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(AllowPrivateAccess=true))
-    bool WeightInfluencer;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(AllowPrivateAccess=true))
-    float Cost;
-    
-    UPROPERTY(Transient)
-    UClass* _toSpawn;
-    
-    UPROPERTY(Transient)
-    TWeakObjectPtr<AActor> _spawnedActorOnAuthority;
-    
-public:
-    UActorSpawner();
-    UFUNCTION(BlueprintCallable)
-    bool UseActivatedElement();
-    
-    UFUNCTION(BlueprintPure)
-    bool IsEnabled() const;
-    
-    UFUNCTION(BlueprintCallable)
-    void EditorForceSpawnVisualization();
-    
-    UFUNCTION(BlueprintCallable)
-    void AuthoritySelect(bool selected);
-    
-    UFUNCTION(BlueprintPure)
-    AActor* AuthorityGetSpawnedActor() const;
-    
-    UFUNCTION(BlueprintCallable)
-    void Authority_SpawnActorAsyncEvent();
-    
-    
-    // Fix for true pure virtual functions not being implemented
+public:	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EGameplayElementType Type;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSoftClassPtr<AActor> Visualization;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool ActivatedByDefault;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FActorSpawnerProperties> ActivatedSceneElement;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FActorSpawnerProperties> DeactivatedSceneElement;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Weight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SpawnCountMax;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 SpawnPriorityTier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FAsyncActorSpawned OnAsyncActorSpawned;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool WeightInfluencable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool WeightInfluencer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Cost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UObject> _toSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AActor* _spawnedActorOnAuthority;
+
+
+	UFUNCTION(BlueprintCallable)
+	bool UseActivatedElement();
+	UFUNCTION(BlueprintCallable)
+	void EditorForceSpawnVisualization();
+	UFUNCTION(BlueprintCallable)
+	AActor* AuthorityGetSpawnedActor();
+	UFUNCTION(BlueprintCallable)
+	void Authority_SpawnActorAsyncEvent();
+
+
+	// Sets default values for this component's properties
+	UActorSpawner();
+
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+		
 };
-

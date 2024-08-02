@@ -1,42 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "CameraHandlerComponent.h"
-#include "Net/UnrealNetwork.h"
 
-class USceneComponent;
-class UParticleSystemComponent;
-class AActor;
+// Sets default values for this component's properties
+UCameraHandlerComponent::UCameraHandlerComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-void UCameraHandlerComponent::SetSocketID(EDBDCameraSocketID mode) {
+	// ...
 }
 
-void UCameraHandlerComponent::SetAttachmentComponent(USceneComponent* attachmentComponent) {
+
+// Called when the game starts
+void UCameraHandlerComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-void UCameraHandlerComponent::PlayVFXOnCurrentCamera(UParticleSystemComponent* component) {
-}
 
-EDBDCameraSocketID UCameraHandlerComponent::GetSocketID() {
-    return EDBDCameraSocketID::VE_None;
-}
+// Called every frame
+void UCameraHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-AActor* UCameraHandlerComponent::GetCurrentCamera() {
-    return NULL;
-}
-
-void UCameraHandlerComponent::AddCameraToSocket(EDBDCameraSocketID mode, AActor* camera) {
-}
-
-void UCameraHandlerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
-    DOREPLIFETIME(UCameraHandlerComponent, _delayedSocketID);
-}
-
-UCameraHandlerComponent::UCameraHandlerComponent() {
-    this->_delayedSocketID = EDBDCameraSocketID::VE_Default;
-    this->_currentSocketID = EDBDCameraSocketID::VE_Default;
-    this->_manualZoomAllowPerkModifiers = false;
-    this->_manualZoomCurveFloat = NULL;
-    this->_cameraAttachmentComponent = NULL;
-    this->_isFOVSystemActive = true;
+	// ...
 }
 

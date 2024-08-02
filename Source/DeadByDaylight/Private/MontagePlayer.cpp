@@ -1,58 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "MontagePlayer.h"
 
-class USkeletalMeshComponent;
-class UAnimMontage;
-class UAnimInstance;
+// Sets default values for this component's properties
+UMontagePlayer::UMontagePlayer()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-void UMontagePlayer::Stop(float blendOutTime) {
+	// ...
 }
 
-void UMontagePlayer::SignalAnimInstanceChanged() {
+
+// Called when the game starts
+void UMontagePlayer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-void UMontagePlayer::SetSkeletalMesh(USkeletalMeshComponent* skeletalMeshComponent) {
-}
 
-void UMontagePlayer::SetPlayRate(float playRate) {
-}
+// Called every frame
+void UMontagePlayer::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-UAnimMontage* UMontagePlayer::PlayLoopForDuration(FAnimationMontageDescriptor animMontageID, float duration, float playRate, FName out) {
-    return NULL;
-}
-
-UAnimMontage* UMontagePlayer::Play(FAnimationMontageDescriptor animMontageID, float playRate, bool isFollower) {
-    return NULL;
-}
-
-void UMontagePlayer::OnMontageEndedInternal(FGuid guid, UAnimMontage* montage, bool interrupted) {
-}
-
-void UMontagePlayer::OnMontageBlendingOutInternal(FGuid guid, UAnimMontage* montage, bool interrupted) {
-}
-
-void UMontagePlayer::JumpToSectionEnd(FName sectionName) {
-}
-
-void UMontagePlayer::JumpToSection(FName sectionName) {
-}
-
-bool UMontagePlayer::IsPlayingAnyMontage() const {
-    return false;
-}
-
-bool UMontagePlayer::IsPlaying(FAnimationMontageDescriptor montageDescriptor) const {
-    return false;
-}
-
-UAnimInstance* UMontagePlayer::GetAnimInstance() const {
-    return NULL;
-}
-
-UMontagePlayer::UMontagePlayer() {
-    this->_animationMappingsTable = NULL;
-    this->_playerSpecificMappingsTable = NULL;
-    this->_currentlyPlayingMontage = NULL;
-    this->_timeBeforeOut = -1.00f;
-    this->_skeletalMeshComponent = NULL;
+	// ...
 }
 

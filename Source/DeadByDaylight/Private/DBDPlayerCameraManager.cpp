@@ -1,7 +1,4 @@
-#include "DBDPlayerCameraManager.h"
+// Fill out your copyright notice in the Description page of Project Settings.
 
-ADBDPlayerCameraManager::ADBDPlayerCameraManager() {
-    this->NormalFOV = 90.00f;
-    this->TargetingFOV = 60.00f;
-}
+#include "DBDPlayerCameraManager.h"
 

@@ -1,280 +1,162 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
-#include "GameEventData.h"
+#include "Structs.h"
+#include "Enums.h"
 #include "GameFramework/PlayerState.h"
-#include "DBDRecentGameplayEvents.h"
-#include "PlayerflowEventsNotifier.h"
-#include "EAIDifficultyLevel.h"
-#include "ScoreEventData.h"
-#include "AIFinishedPlayingEventDelegate.h"
-#include "GameplayTagContainer.h"
-#include "EPlayerRole.h"
-#include "CharacterStateData.h"
-#include "PlayerStateData.h"
-#include "EquippedPlayerCustomization.h"
-#include "PlayerGameplayEventDelegateDelegate.h"
-#include "OnGameStateChangedDelegate.h"
-#include "OnPlayerGameStateChangedDelegate.h"
-#include "AwardedScores.h"
-#include "UserGameStats.h"
-#include "OngoingScoreData.h"
-#include "EPlatformFlag.h"
-#include "EProviderFlag.h"
-#include "EGameState.h"
-#include "EDBDScoreTypes.h"
-#include "AwardedScore.h"
-#include "StatusViewSource.h"
 #include "DBDPlayerState.generated.h"
 
-class UDedicatedServerHandlerComponent;
-class URitualHandlerComponent;
-class UCharacterStatsHandlerComponent;
-class UGameplayNotificationManager;
-class UAchievementHandlerComponent;
-class AActor;
-
+/**
+ * 
+ */
 UCLASS()
-class DEADBYDAYLIGHT_API ADBDPlayerState : public APlayerState, public IPlayerflowEventsNotifier {
-    GENERATED_BODY()
+class DEADBYDAYLIGHT_API ADBDPlayerState : public APlayerState
+{
+	GENERATED_BODY()
 public:
-    UPROPERTY(BlueprintAssignable)
-    FAIFinishedPlayingEvent OnAIFinishedPlayingEvent;
-    
-    UPROPERTY(Replicated, Transient)
-    FString MirrorsId;
-    
-    UPROPERTY(Transient)
-    FString ContentVersion;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_BotDifficultyLevel)
-    EAIDifficultyLevel _difficultyLevel;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    bool IsPlayerReady;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    EPlayerRole GameRole;
-    
-    UPROPERTY(BlueprintReadOnly, Export, Transient)
-    URitualHandlerComponent* RitualHandler;
-    
-    UPROPERTY(BlueprintReadOnly, Export, Transient)
-    UDedicatedServerHandlerComponent* DedicatedServerHandler;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    FCharacterStateData CamperData;
-    
-    UPROPERTY(ReplicatedUsing=OnRep_DisplayData)
-    FCharacterStateData SlasherData;
-    
-    UPROPERTY(ReplicatedUsing=OnRep_DisplayData)
-    FPlayerStateData PlayerData;
-    
-    UPROPERTY(ReplicatedUsing=OnRep_CustomizationData)
-    FEquippedPlayerCustomization PlayerCustomization;
-    
-    UPROPERTY(BlueprintAssignable)
-    FPlayerGameplayEventDelegate OnPlayerGameplayEvent;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnGameStateChanged OnGameStateChanged;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnPlayerGameStateChanged OnPlayerGameStateChanged;
-    
-protected:
-    UPROPERTY()
-    TMap<FName, FAwardedScores> _awardedScoresByType;
-    
-    UPROPERTY()
-    FUserGameStats _cachedUserGameStats;
-    
-    UPROPERTY()
-    TArray<FOngoingScoreData> _ongoingScoreEvents;
-    
-    UPROPERTY()
-    FDBDRecentGameplayEvents _recentGameplayEvents;
-    
-    UPROPERTY(Replicated, Transient)
-    bool _inParadise;
-    
-private:
-    UPROPERTY(Export, Transient)
-    UGameplayNotificationManager* _gameplayNotificationManager;
-    
-    UPROPERTY(Export, Transient)
-    UAchievementHandlerComponent* _achievementHandler;
-    
-    UPROPERTY(Export, Transient)
-    UCharacterStatsHandlerComponent* _characterStatsHandler;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    FString _platformAccountId;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    int32 _selectedCamperIndex;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    int32 _selectedSlasherIndex;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    EPlatformFlag _platform;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    EProviderFlag _provider;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    bool _crossplayAllowed;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_DisplayData)
-    bool _offNetworkFlag;
-    
-    UPROPERTY(Replicated, Transient)
-    bool _gameLevelLoaded;
-    
-    UPROPERTY(Replicated, Transient)
-    bool _showPortraitBorder;
-    
-    UPROPERTY(Replicated, Transient)
-    bool _hasActiveSubscription;
-    
-public:
-    ADBDPlayerState();
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
-protected:
-    UFUNCTION()
-    void UpdateOngoingScores();
-    
-public:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SetSelectedCharacterId(EPlayerRole forRole, int32 id, bool updateDisplayData);
-    
-private:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SetPlayerGameState(EGameState newGameState, bool isEscapeHatch);
-    
-public:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SetGameRole(EPlayerRole newPlayerRole);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SelectSurvivor(int32 camperIndex);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SelectKiller(int32 slasherIndex);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_HandleScoreEvent(FGameplayTag scoreTypeTag, FScoreEventData scoreEventData);
-    
-    UFUNCTION()
-    void OnRep_DisplayData();
-    
-    UFUNCTION()
-    void OnRep_CustomizationData();
-    
-    UFUNCTION()
-    void OnRep_BotDifficultyLevel();
-    
-protected:
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SetSelectedCharacterId(EPlayerRole forRole, int32 id, bool updateDisplayData);
-    
-private:
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SetPlayerGameState(EGameState newGameState, bool isEscapeHatch);
-    
-protected:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetInParadise();
-    
-public:
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SetAsLeftMatch();
-    
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SetAsDisconnected();
-    
-private:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_FireGameplayEventWithScore(EDBDScoreTypes playerGameplayEventType, float amount, AActor* effector, AActor* target, const FAwardedScore& awardedScore);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_FireGameplayEvent(EDBDScoreTypes playerGameplayEventType, float amount, AActor* effector, AActor* target);
-    
-public:
-    UFUNCTION(BlueprintPure)
-    bool IsInFinishedPlayingState() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasHappened(EDBDScoreTypes gameplayEventType, float maxSecondsAgo) const;
-    
-    UFUNCTION()
-    bool HasEscaped() const;
-    
-    UFUNCTION(BlueprintPure)
-    EGameState GetPlayerGameState() const;
-    
-    UFUNCTION(BlueprintPure)
-    EPlayerRole GetGameRole() const;
-    
-    UFUNCTION(BlueprintPure)
-    UGameplayNotificationManager* GetGameplayNotificationManager() const;
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void FireScoreEvent(EDBDScoreTypes scoreType, float percentToAward);
-    
-    UFUNCTION(BlueprintCallable)
-    void FireActiveStatusViewEvent(FName statusViewID, FName uniqueSourceID, const FStatusViewSource statusViewSource);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void FireActiveStatusEffectEvent(FName statusEffectID, float percentage, int32 iconFilePathIndex, int32 levelToDisplay);
-    
-private:
-    UFUNCTION(Client, Reliable)
-    void Client_UpdateWallet(const FString& currencyId, int32 amount);
-    
-    UFUNCTION(Client, Reliable)
-    void Client_SetInParadise();
-    
-protected:
-    UFUNCTION(Client, Reliable, WithValidation)
-    void Client_SetGameRole(EPlayerRole newRole);
-    
-public:
-    UFUNCTION(Client, Reliable)
-    void Client_RemoveItemFromInventory(FName toRemove, bool updateLoadout);
-    
-    UFUNCTION(Client, Reliable, WithValidation)
-    void Client_RemotelyDispatchGameEventWithScore(const FGameplayTag& gameEventType, const FGameEventData& gameEventData, const FAwardedScore& awardedScore);
-    
-    UFUNCTION(Client, Reliable, WithValidation)
-    void Client_RemotelyDispatchGameEvent(const FGameplayTag& gameEventType, const FGameEventData& gameEventData);
-    
-    UFUNCTION(Client, Reliable)
-    void Client_HandleEscapeScoreEvent();
-    
-protected:
-    UFUNCTION(Client, Reliable)
-    void Client_AtlantaUpdateInventoryItem(const FName& itemid, int32 newCount);
-    
-public:
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_HandleScoreEvent(FGameplayTag scoreTypeTag, FScoreEventData scoreEventData);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_ForceEndOngoingScoreEvent(EDBDScoreTypes scoreType);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_ForceCancelOngoingScoreEvent(EDBDScoreTypes scoreType);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_EndOngoingScoreEvent(FGameplayTag scoreTypeTag);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_CancelOngoingScoreEvent(FGameplayTag scoreTypeTag);
-    
-    
-    // Fix for true pure virtual functions not being implemented
-};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString MirrorsId;                  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ContentVersion;             
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsPlayerReady;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlayerRole GameRole;                    
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class URitualHandlerComponent* RitualHandler;      
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UActivityTrackerComponent* ActivityTracker;             
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UDBDEmblemEvaluatorComponent* EmblemEvaluator;             
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCharacterStateData CamperData;             
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCharacterStateData SlasherData;    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPlayerStateData PlayerData;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPlayerCustomization PlayerCustomization;         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSkillCheckInteractionData SkillCheckInteractionData;   
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//struct FScriptMulticastDelegate OnPlayerGameplayEvent;       
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//struct FScriptMulticastDelegate OnGameStateChanged;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//struct FScriptMulticastDelegate OnPlayergameStateChanged;    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, FAwardedScores> _awardedScoresByType;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FUserGameStats _cachedUserGameStats;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FOngoingScoreData> _ongoingScoreEvents;         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDBDRecentGameplayEvents _recentGameplayEvents;       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool _inParadise;                 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UGameplayNotificationManager* _gameplayNotificationManager;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UAchievementHandlerComponent* _achievementHandler;    
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UCharacterStatsHandlerComponent* _characterStatsHandler;      
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString _platformAccountId;          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int _selectedCamperIndex;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int _selectedSlasherIndex;       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlatformFlag _platform;                   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool _crossplayAllowed;           
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool _gameLevelLoaded;            
 
+
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateSkillCheckInteractionData(float Progress);
+	UFUNCTION(BlueprintCallable)
+	void UpdateOngoingScores();
+	UFUNCTION(BlueprintCallable)
+	void SetSkillCheckInteractionData(FSkillCheckInteractionData skillCheckData);
+	UFUNCTION(BlueprintCallable)
+	void SetKillerJoiningState(EKillerJoiningState State);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetSelectedCharacterId(EPlayerRole forRole, int ID, bool updateDisplayData);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetPlayerGameState(EGameState newGameState);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetGameRole(EPlayerRole newPlayerRole);
+	UFUNCTION(BlueprintCallable)
+	void Server_SelectSurvivor(int camperIndex);
+	UFUNCTION(BlueprintCallable)
+	void Server_SelectKiller(int slasherIndex);
+	UFUNCTION(BlueprintCallable)
+	void Server_KillerServerJoined(bool succeeded);
+	UFUNCTION(BlueprintCallable)
+	void Server_HandleScoreEvent(FGameplayTag scoreTypeTag, FScoreEventData ScoreEventData);
+	UFUNCTION(BlueprintCallable)
+	void OnRep_DisplayData();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_CustomizationData();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_UpdateSkillCheckInteractionData(float Progress);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetSkillCheckInteractionData(FSkillCheckInteractionData skillCheckInteraction);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetSelectedCharacterId(EPlayerRole forRole, int ID, bool updateDisplayData);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetPlayerGameState(EGameState newGameState);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetInParadise();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetAsLeftMatch();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetAsDisconnected();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_FireGameplayEvent(EDBDScoreTypes playerGameplayEventType, float amount, AActor* effector, AActor* Target);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_AwardScore(FAwardedScore AwardedScore);
+	UFUNCTION(BlueprintCallable)
+	EKillerJoiningState KillerJoiningState();
+	UFUNCTION(BlueprintCallable)
+	void InitializeAvailablePerkEvent(FName PerkId);
+	UFUNCTION(BlueprintCallable)
+	bool HasHappened(EDBDScoreTypes gameplayEventType, float maxSecondsAgo);
+	UFUNCTION(BlueprintCallable)
+	bool HasEscaped();
+	UFUNCTION(BlueprintCallable)
+	EGameState GetPlayerGameState();
+	//UFUNCTION(BlueprintCallable)
+	//UGameplayNotificationManager* GetGameplayNotificationManager();
+	UFUNCTION(BlueprintCallable)
+	void FireScoreEvent(EDBDScoreTypes scoreType, float PercentToAward);
+	UFUNCTION(BlueprintCallable)
+	void FireActiveStatusViewEvent(FName StatusViewID, FName uniqueSourceID, FStatusViewSource StatusViewSource);
+	UFUNCTION(BlueprintCallable)
+	void FireActiveStatusEffectEvent(FName statusEffectId, float percentage, int iconFilePathIndex, int LevelToDisplay);
+	UFUNCTION(BlueprintCallable)
+	void Client_SetInParadise();
+	UFUNCTION(BlueprintCallable)
+	void Client_SetGameRole(EPlayerRole newRole);
+	UFUNCTION(BlueprintCallable)
+	void Client_RemoveItemFromInventory(FName toRemove, bool UpdateLoadout);
+	UFUNCTION(BlueprintCallable)
+	void Client_RemotelyDispatchGameEvent(FGameplayTag gameEventType, FGameEventData GameEventData);
+	UFUNCTION(BlueprintCallable)
+	void Client_HandleEscapeScoreEvent();
+	UFUNCTION(BlueprintCallable)
+	void Authority_HandleScoreEvent(FGameplayTag scoreTypeTag, FScoreEventData ScoreEventData);
+	UFUNCTION(BlueprintCallable)
+	void Authority_ForceEndOngoingScoreEvent(EDBDScoreTypes scoreType);
+	UFUNCTION(BlueprintCallable)
+	void Authority_ForceCancelOngoingScoreEvent(EDBDScoreTypes scoreType);
+	UFUNCTION(BlueprintCallable)
+	void Authority_EndOngoingScoreEvent(FGameplayTag scoreTypeTag);
+	UFUNCTION(BlueprintCallable)
+	void Authority_CancelOngoingScoreEvent(FGameplayTag scoreTypeTag);
+};

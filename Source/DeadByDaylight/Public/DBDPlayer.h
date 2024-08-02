@@ -1,1333 +1,946 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
-#include "Templates/SubclassOf.h"
-#include "PerkManagerOwnerInterface.h"
-#include "EPlayerTeam.h"
+#include "GameFramework/Actor.h"
 #include "DBDBasePlayer.h"
-#include "PerkOwnerInterface.h"
-#include "AnimNotifyDelegate_PickupDelegate.h"
-#include "AnimTagProvider.h"
-#include "ObjectStateProvider.h"
-#include "GenericTeamAgentInterface.h"
-#include "Perception/AISightTargetInterface.h"
-#include "OnAttackedEventDelegate.h"
-#include "DynamicGrassEffectorInterface.h"
-#include "PushableInterface.h"
-#include "UObject/NoExportTypes.h"
-#include "DamageTargetDelegateDelegate.h"
-#include "OnSensedDelegateDelegate.h"
-#include "AnimNotifyDelegate_ReleaseDelegate.h"
-#include "SecondaryActionInputDelegateDelegate.h"
-#include "OnFirstPersonModeChangedDelegate.h"
-#include "OnDreamworldComponentSetDelegate.h"
-#include "OnForwardInputLockedChangedDelegate.h"
-#include "UObject/NoExportTypes.h"
-#include "OnRunningAndMovingChangedDelegate.h"
-#include "OnLocallyObservedChangedForPlayerDelegate.h"
-#include "ECamperState.h"
-#include "EAttackSubstate.h"
-#include "EffectCameraTypeSettings.h"
-#include "ScoreEventData.h"
-#include "EDetectionZone.h"
-#include "EInputInteractionType.h"
-#include "EDBDScoreTypes.h"
-#include "EAnimNotifyType.h"
-#include "UObject/NoExportTypes.h"
-#include "Engine/EngineTypes.h"
-#include "EInteractionAnimation.h"
-#include "EAuthoritativeMovementFlag.h"
-#include "CharmIdSlot.h"
-#include "GameplayTagContainer.h"
-#include "AnimationMontageDescriptor.h"
-#include "UObject/NoExportTypes.h"
-#include "Engine/EngineTypes.h"
-#include "EPlayerRole.h"
-#include "EPawnType.h"
-#include "MontagePlaybackDefinition.h"
-#include "InteractionPlayerProperties.h"
+#include "Sound/SoundCue.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Components/SkinnedMeshComponent.h"
-#include "AnimData.h"
-#include "EStunType.h"
+#include "CustomizedAudioComponent.h"
+#include "CustomizedSkeletalMesh.h"
+#include "CharacterInventoryComponent.h"
+#include "CharacterDreamworldComponent.h"
+#include "CharacterChaseVisualComponent.h"
+#include "SpecialEventSpawnerComponent.h"
+#include "PlayerGameRelevancyComponent.h"
+#include "CameraHandlerComponent.h"
+#include "ChargeableComponent.h"
+#include "PollableEventListener.h"
+#include "ChaseComponent.h"
+#include "ZoneDetectorComponent.h"
+#include "InteractionDefinition.h"
+#include "AuthoritativeMovementComponent.h"
+#include "AudioFXComponent.h"
+#include "BlindableComponent.h"
+#include "BlindingFXComponent.h"
+#include "PlayerPerspectiveComponent.h"
+#include "CharacterSightableComponent.h"
+#include "CharacterSightComponent.h"
+#include "InteractionDetectorComponent.h"
+#include "ClippableProviderComponent.h"
+#include "StateMachine.h"
+#include "MontagePlayer.h"
+#include "Collectable.h"
+#include "ItemModifier.h"
+#include "ItemAddon.h"
+#include "StatusEffect.h"
+#include "PlayerInteractionHandler.h"
+#include "CamperInteractable.h"
+#include "DBDPlayerData.h"
+#include "DBDPlayerState.h"
+#include "DBDPlayerController.h"
+#include "DBDPlayerCameraManager.h"
+//#include "CamperPlayer.h"
+#include "Interactor.h"
+#include "PerkManager.h"
+#include "AxisFlickMasher.h"
+#include "InputMasher.h"
+#include "Structs.h"
+#include "Enums.h"
 #include "DBDPlayer.generated.h"
 
-class UStateMachine;
-class UBoxComponent;
-class UCharacterSightableComponent;
-class ADBDPlayer;
-class UMaterialHelper;
-class UAnimInstance;
-class UGameplayTagContainerComponent;
-class UAxisFlickMasher;
-class UDBDPlayerData;
-class UCurveFloat;
-class USpringArmComponent;
-class AActor;
-class UCharacterChaseVisualComponent;
-class AInteractable;
-class UCameraComponent;
-class APlayerInteractable;
-class UChargeableComponent;
-class UCharacterInventoryComponent;
-class UBoxOcclusionQueryComponent;
-class UInteractionDefinition;
-class UActivatorComponent;
-class UPlayerPerspectiveComponent;
-class USoundCue;
-class UPrimitiveComponent;
-class UPlayerInteractionHandler;
-class UAudioFXComponent;
-class UMontagePlayer;
-class UPerkManager;
-class UAIPerceptionStimuliSourceComponent;
-class UCharacterDreamworldComponent;
-class UCameraHandlerComponent;
-class UReversibleActionSystemComponent;
-class UZoneDetectorComponent;
-class USceneComponent;
-class UBlindableComponent;
-class UPollableEventListener;
-class UCharacterSightComponent;
-class UChaseComponent;
-class UAuthoritativeMovementComponent;
-class UInteractionDetectorComponent;
-class UPrimitivesRegistererComponent;
-class UClippableProviderComponent;
-class UDynamicCapsuleResizerComponent;
-class UPlayerGameRelevancyComponent;
-class UContextualQuestComponent;
-class UActorComponent;
-class UChargeableProgressProviderComponent;
-class ADBDPlayerState;
-class UOtherCharactersVerticalCollisionsHandler;
-class ACollectable;
-class UStatusEffect;
-class UAnimMontage;
-class AController;
-class ADBDPlayerController;
-class UItemModifier;
-class UItemAddon;
-class UCustomizedSkeletalMesh;
-class ADBDPlayerCameraManager;
-class APlayerState;
-class ACharacter;
-class UGameplayModifierContainer;
-class UInteractor;
+UCLASS()
+class DEADBYDAYLIGHT_API ADBDPlayer : public ADBDBasePlayer
+{
+	GENERATED_BODY()
+public:	
 
-UCLASS(Abstract)
-class DEADBYDAYLIGHT_API ADBDPlayer : public ADBDBasePlayer, public IPerkOwnerInterface, public IPerkManagerOwnerInterface, public IAnimTagProvider, public IObjectStateProvider, public IGenericTeamAgentInterface, public IAISightTargetInterface, public IPushableInterface, public IDynamicGrassEffectorInterface {
-    GENERATED_BODY()
-public:
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIsCrouchedChanged, bool, isCrouched);
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    bool AllowInterrupting;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float MinFallHeight;
-    
-    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-    bool IsInterruptable;
-    
-    UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-    bool AllowNavigationInput;
-    
-    UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-    bool AllowNavigationBackwardInput;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    bool AllowTurningInput;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    bool AllowPitchInput;
-    
-    UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-    bool AllowStrafeInput;
-    
-    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-    bool IsInInteractionUpdate;
-    
-    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-    bool IsInteractionChargeCompleted;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float PitchLimitLower;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float PitchLimitUpper;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    FVector StrafingOffset;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float PelvisHeight;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float PelvisHeightForPounceOnStandingCamper;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float PelvisHeightForPounceOnCrouchingCamper;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnAttackedEvent Authority_OnAttackedDelegate;
-    
-    UPROPERTY(BlueprintAssignable)
-    FDamageTargetDelegate OnDamageTargetDelegate;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnSensedDelegate OnSensed;
-    
-    UPROPERTY(BlueprintAssignable)
-    FAnimNotifyDelegate_Pickup OnAnimNotify_Pickup;
-    
-    UPROPERTY(BlueprintAssignable)
-    FAnimNotifyDelegate_Release OnAnimNotify_Release;
-    
-    UPROPERTY(BlueprintAssignable)
-    FSecondaryActionInputDelegate Authority_OnSecondaryActionInput;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnFirstPersonModeChanged OnFirstPersonModeChanged;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnDreamworldComponentSet OnDreamworldComponentSet;
-    
-    UPROPERTY()
-    FOnForwardInputLockedChanged OnForwardInputLockedChanged;
-    
-    UPROPERTY(BlueprintReadWrite, Export, VisibleAnywhere)
-    USpringArmComponent* CameraBoom;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    bool ForceSkillChecks;
-    
-    UPROPERTY(BlueprintReadWrite, Transient)
-    FTransform IKLeftHandTransform;
-    
-    UPROPERTY(BlueprintReadWrite, Transient)
-    FTransform IKRightHandTransform;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float CameraResetSpeed;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float AverageSpeedBufferTime;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float AlmostCurrentSpeedBufferTime;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    UCurveFloat* GamepadYawCurve;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    UCurveFloat* GamepadPitchCurve;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    UCurveFloat* GamepadSettingToYawRateCurve;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    UCurveFloat* GamepadSettingToPitchRateCurve;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    UCurveFloat* JoyconSettingToYawRateCurve;
-    
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
-    UCurveFloat* JoyconSettingToPitchRateCurve;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnIsCrouchedChanged OnIsCrouchedChanged;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnRunningAndMovingChanged OnRunningAndMovingChanged;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnLocallyObservedChangedForPlayer OnLocallyObservedChangedForPlayer;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Export)
-    UCameraComponent* Camera;
-    
-    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Export)
-    UMaterialHelper* MaterialHelper;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    TSubclassOf<APlayerInteractable> Interactable;
-    
+             
+	//DELEGATE FScriptMulticastDelegate OnLocallyObservedChangedForPlayer;          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* Camera;                                     
+	// GFXUtilities.             UMaterialHelper* MaterialHelper;                                         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UClass* Interactable;                          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AllowInterrupting;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MinFallHeight;                       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsInterruptable;                      
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AllowNavigationInput;                 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AllowNavigationBackwardInput;         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AllowTurningInput;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AllowPitchInput;                      
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AllowStrafeInput;                     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PitchLimitLower;                     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PitchLimitUpper;                     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector StrafingOffset;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PelvisHeight;                        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PelvisHeightForPounceOnStandingCamper;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)      
+	float PelvisHeightForPounceOnCrouchingCamper;     
+	// DELEGATE       FScriptMulticastDelegate Authority_OnAttackedDelegate;               
+	// DELEGATE       FScriptMulticastDelegate OnDamageTargetDelegate;                     
+	// DELEGATE       FScriptMulticastDelegate OnSensed;                                   
+	// DELEGATE       FScriptMulticastDelegate OnAnimNotify_Pickup;                        
+	// DELEGATE       FScriptMulticastDelegate OnAnimNotify_Release;                       
+	// DELEGATE       FScriptMulticastDelegate OnSecondaryActionInput;                     
+	// DELEGATE       FScriptMulticastDelegate OnFirstPersonModeChanged;                   
+	// DELEGATE       FScriptMulticastDelegate OnDreamworldComponentSet;                   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USpringArmComponent* CameraBoom;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool ForceDisableFootIK;                   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool ForceSkillChecks;                     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform IKLeftHandTransform;            
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform IKRightHandTransform;           
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CameraResetSpeed;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* BlinkFOVCurve;                
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CurrentBlinkDistance;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CurrentBlinkChargePercent;                  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AverageSpeedBufferTime;              
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AlmostCurrentSpeedBufferTime;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* GamepadYawCurve;              
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* GamepadPitchCurve;            
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// DELEGATE     FScriptMulticastDelegate OnIsCrouchedChanged;                        
+	// DELEGATE     FScriptMulticastDelegate OnRunningAndMovingChanged;     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCharacterInventoryComponent* _characterInventoryComponent;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CarryJointName;                          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackPounceCurves;   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackLungeCurves;    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackSlashCurves;    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackChainsawCurves; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackBlinkCurves;    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackAmbushCurves;   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackChargedDashCurves;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UCurveFloat*> AttackFrenzyCurves;       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float _pitchOffsetForInteractionPriority;         
+	//from GameplayUtilities    UBoxOcclusionQueryComponent* _renderedPixelCounter;                      
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsInteracting;                            
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ClearPathTestRadiusMultiplier;       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ClearPathTestHeightMultiplier;       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LocationClearTestRadiusMultiplier;   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LocationClearTestHeightMultiplier;   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ClearPathTestStepHeight;             
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float GamePadTurnRate;                     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float GamePadLookUpRate;                   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MouseTurnSpeedMultiplier;           
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MouseLookUpSpeedMultiplier;                 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* DeathSound;                         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECamperState CurrentCamperState;           
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CollectableAttachPoint;              
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FOffering> _offerings;              
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStateMachine* _SM;                        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPlayerInteractionHandler* _interactionHandler;                        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMontagePlayer* _montagePlayer;                
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPerkManager* _perkManager;                
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDBDPlayerData* _playerData;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAxisFlickMasher* _wiggleAxisFlickMasher;  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputMasher* _interactInputMasher;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ACamperInteractable* _interactable;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ADBDPlayer*> _overlappingPlayers;   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ADBDPlayer* _guidingPlayer;                
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ADBDPlayer* _interactingPlayer;            
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackSubstate _nextAttackSubstate;       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TWeakObjectPtr<ADBDPlayer> _lockOnTarget;  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TWeakObjectPtr<ADBDPlayer> _hitTarget;     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCharacterDreamworldComponent* _dreamworldComponent;                       
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCharacterChaseVisualComponent* _characterChaseVisualComponent;             
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraHandlerComponent* _cameraHandlerComponent;                    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USpecialEventSpawnerComponent* _specialEventSpawnerComponent;              
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* _itemDropOffPosition;         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> _ignoreActors;             
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> _ignoreBelowActors;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> _overlappingActors;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FEffectCameraTypeSettings> EffectCameraTypeSettings;         
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UChargeableComponent* _blindingChargeableComponent;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPollableEventListener* _eventListener;        
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UChaseComponent* _chaseComponent;          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UZoneDetectorComponent* _meatHookZoneDetector;                      
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UZoneDetectorComponent* _basementZoneDetector;                      
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int _framesForSlasherAutoAttackOnCamperInteract;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int _framesForSlasherAutoAttack;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInteractionDefinition* _bookmarkedInteraction;                     
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<EDetectionZone, UPrimitiveComponent*> _detectionZoneMap;                          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAuthoritativeMovementComponent* _authoritativeMovementComponent;            
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float _screenAspectRatio;                      
+	
+	//UGameplayTagContainerComponent* _objectState;                               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAudioFXComponent* _audioFXComponent;          
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBlindableComponent* _blindableComponent;  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBlindingFXComponent* _blindFxComponent;   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPlayerPerspectiveComponent* _playerPerspectiveComponent;                
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCharacterSightComponent* _characterSightComponent;                   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCharacterSightableComponent* _characterSightableComponent;               
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInteractionDetectorComponent* _interactionDetectorComponent;              
+	//UPrimitivesRegistererComponent* _clippablePrimitivesRegistererComponent; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UClippableProviderComponent* _clippableProviderComponent;
+	//UDynamicCapsuleResizerComponent* _dynCapsuleResizer;                         
+	UPlayerGameRelevancyComponent* _playerGameRelevancyComponent;              
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UActorComponent* _questEventHandler;           
+	
+	//UInterpolatedMovementInputStrategy* _movementInputStrategy;           
+
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateLoadoutFromInventory();
+	UFUNCTION(BlueprintCallable)
+	bool TryInteractionType(EInputInteractionType interactionInputType,  ADBDPlayer* Requester, bool usingInputPersistence);
+	UFUNCTION(BlueprintCallable)
+	bool TryInteraction( UInteractionDefinition* Interaction,  ADBDPlayer* Requester, bool force, bool usingInputPersistence);
+	UFUNCTION(BlueprintCallable)
+	bool TryFireScoreEvent(EDBDScoreTypes scoreType, float PercentToAward);
+	UFUNCTION(BlueprintCallable)
+	void TriggerTrapImmunity(float Duration);
+	UFUNCTION(BlueprintCallable)
+	void TriggerAnimNotify(EAnimNotifyType animNotifyType);
+	UFUNCTION(BlueprintCallable)
+	void ToggleGhost();
+	UFUNCTION(BlueprintCallable)
+	bool TeleportToBP( FVector DestLocation,  FRotator DestRotation, bool bIsATest, bool bNoCheck);
+	UFUNCTION(BlueprintCallable)
+	void StopSnap(bool snap);
+	UFUNCTION(BlueprintCallable)
+	void StopMontage();
+	UFUNCTION(BlueprintCallable)
+	void StopAllMovement();
+	UFUNCTION(BlueprintCallable)
+	void SnapCharacter(bool snapPosition,  FVector Position, float stopSnapDistance, bool snapRotation,  FRotator Rotation, float Time, bool useZCoord, bool sweepOnFinalSnap);
+	UFUNCTION(BlueprintCallable)
+	bool ShouldPlayCarryAnim();
+	UFUNCTION(BlueprintCallable)
+	bool ShouldFall();
+	UFUNCTION(BlueprintCallable)
+	void SetYawScale(float yawScale, float adjustTime);
+	UFUNCTION(BlueprintCallable)
+	void SetWorldCollisionResponse(ECollisionResponse response);
+	UFUNCTION(BlueprintCallable)
+	void SetShouldPlayCarryAnim(bool ShouldPlayCarryAnim);
+	UFUNCTION(BlueprintCallable)
+	void SetRightFootAudioSurfaceName( FString Name);
+	UFUNCTION(BlueprintCallable)
+	void SetReverseMontage(bool Reverse);
+	UFUNCTION(BlueprintCallable)
+	void SetQuestEventHandlerComponent( UActorComponent* Component);
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerDirection( FRotator Rotation);
+	UFUNCTION(BlueprintCallable)
+	void SetPitchScale(float pitchScale, float adjustTime);
+	UFUNCTION(BlueprintCallable)
+	void SetPawnAuthoritativeMovement(bool authoritative);
+	UFUNCTION(BlueprintCallable)
+	void SetLeftFootAudioSurfaceName( FString Name);
+	UFUNCTION(BlueprintCallable)
+	void SetItemUseAsToggle(bool value);
+	UFUNCTION(BlueprintCallable)
+	void SetIsCloaked(bool IsCloaked, bool Forced);
+	UFUNCTION(BlueprintCallable)
+	void SetInParadise(bool InParadise);
+	UFUNCTION(BlueprintCallable)
+	void SetIgnoreActorCollision( AActor* ActorToIgnore, bool ignore);
+	UFUNCTION(BlueprintCallable)
+	void SetGuidingPlayer( ADBDPlayer* guidingPlayer);
+	UFUNCTION(BlueprintCallable)
+	void SetForceDisableSkillChecks(bool IsEnabled);
+	UFUNCTION(BlueprintCallable)
+	void SetFirstPersonVfxsVisibility(bool isFirstPerson);
+	UFUNCTION(BlueprintCallable)
+	void SetFirstPersonModelEnabled(bool Enabled, bool force);
+	UFUNCTION(BlueprintCallable)
+	void SetFeetOnGround(bool feetOnGround);
+	UFUNCTION(BlueprintCallable)
+	void SetEthereal(bool Enabled, bool allowOverlaps);
+	UFUNCTION(BlueprintCallable)
+	void SetEnableServerPositionUpdates(bool enable);
+	UFUNCTION(BlueprintCallable)
+	void SetEmulateGamepadForMouseYaw(bool emulate);
+	UFUNCTION(BlueprintCallable)
+	void SetEmulateGamepadForMousePitch(bool emulate);
+	UFUNCTION(BlueprintCallable)
+	void SetDetectionZoneEnabled(EDetectionZone detectionZoneID, bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentInteractionAnimation(EInteractionAnimation Animation);
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterAudioSurfaceName( FString Name);
+	UFUNCTION(BlueprintCallable)
+	void SetAuthoritativeMovementFlag(EAuthoritativeMovementFlag flagIndex, bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void SetAnimationCrouchState(bool crouched);
+	UFUNCTION(BlueprintCallable)
+	void SetAllowNavigation(bool enable);
+	UFUNCTION(BlueprintCallable)
+	void SetAllDetectionZonesEnabled(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void ServerResetMeshRelativeOffSet();
+	UFUNCTION(BlueprintCallable)
+	void Server_UpdateScreenAspectRatio(float value);
+	UFUNCTION(BlueprintCallable)
+	void Server_TeleportTo( FVector DestLocation,  FRotator DestRotation, bool bIsATest, bool bNoCheck);
+	UFUNCTION(BlueprintCallable)
+	void Server_SpawnItemAddon( FName addonID);
+	UFUNCTION(BlueprintCallable)
+	void Server_SpawnItem( FName ItemId);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetSlasherAutoAttackOnCamperInteractFrameDelay(int Frames);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetSlasherAutoAttackFrameDelay(int Frames);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetRunVaultEnabled(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetReverseTraverseEnabled(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetMaxWalkSpeed(float MaxWalkSpeed);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetForceAuthoritativeMovement(bool value);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetEthereal(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetEnableServerPositionUpdates(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetEnableCapsuleDynamicResize(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetDebugSnapPoint(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetDebugPrintAvailableInteractions(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetDebugFailAllInteractions(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetDebugCarry(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetCustomization(TArray<FName> customizationParts, TArray<FCharmIdSlot> customizationCharms);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetContinuousPrintDebug(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SetAuthoritativeMovement(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Server_SendSecondaryActionPressed();
+	UFUNCTION(BlueprintCallable)
+	void Server_SendItemUseInput(bool pressed);
+	UFUNCTION(BlueprintCallable)
+	void Server_SendItemUse(bool Use);
+	UFUNCTION(BlueprintCallable)
+	void Server_SendItemDropInput(bool pressed);
+	UFUNCTION(BlueprintCallable)
+	void Server_SendInteractionInput(bool pressed);
+	UFUNCTION(BlueprintCallable)
+	void Server_SendFastInteractionInput(bool pressed);
+	UFUNCTION(BlueprintCallable)
+	void Server_SendAbilityInput(bool pressed);
+	UFUNCTION(BlueprintCallable)
+	void Server_RemoveStatusEffectByID( FName statusEffectId, bool bRemoveAllWithID);
+	UFUNCTION(BlueprintCallable)
+	void Server_PlayerReady();
+	UFUNCTION(BlueprintCallable)
+	void Server_OnInsaneSkillCheck();
+	UFUNCTION(BlueprintCallable)
+	void Server_Ghost(bool Ghost);
+	UFUNCTION(BlueprintCallable)
+	void Server_FailInterruption( ADBDPlayer* interruptee);
+	UFUNCTION(BlueprintCallable)
+	void Server_EndStatusEffectByID( FName statusEffectId, bool bRemoveAllWithID);
+	UFUNCTION(BlueprintCallable)
+	void Server_Drop(ACollectable* Item,  FVector Location,  FRotator Rotation, bool onDeath);
+	UFUNCTION(BlueprintCallable)
+	void Server_CheatDispatchOnPostItemAddonsCreation();
+	UFUNCTION(BlueprintCallable)
+	void Server_Cheat();
+	UFUNCTION(BlueprintCallable)
+	void SecondaryActionInputPressed();
+	UFUNCTION(BlueprintCallable)
+	void ResetYawScale(float adjustTime);
+	UFUNCTION(BlueprintCallable)
+	void ResetPitchScale(float adjustTime);
+	UFUNCTION(BlueprintCallable)
+	void ResetMeshRelativeRotation();
+	UFUNCTION(BlueprintCallable)
+	void ResetMeshRelativePosition();
+	UFUNCTION(BlueprintCallable)
+	void ResetCamera();
+	UFUNCTION(BlueprintCallable)
+	void RemoveStatusEffect(UStatusEffect* StatusEffect);
+	UFUNCTION(BlueprintCallable)
+	void Remotely_HandleScoreEvent(FGameplayTag scoreTypeTag,  FScoreEventData ScoreEventData);
+	UFUNCTION(BlueprintCallable)
+	UAnimMontage* PlayMontage(FAnimationMontageDescriptor animMontageID, float PlayRate, bool isFollower);
+	UFUNCTION(BlueprintCallable)
+	void OnRep_Interactable();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_DreamworldComponent();
+	UFUNCTION(BlueprintCallable)
+	void OnPickupStart(ADBDPlayer* Target);
+	UFUNCTION(BlueprintCallable)
+	void OnPickupEnd(ADBDPlayer* Target);
+	UFUNCTION(BlueprintCallable)
+	void OnPawnDetectorOverlapExit( UPrimitiveComponent* HitComponent,  AActor* OtherActor,  UPrimitiveComponent* OtherComp, int OtherBodyIndex);
+	UFUNCTION(BlueprintCallable)
+	void OnPawnDetectorOverlapEnter( UPrimitiveComponent* HitComponent,  AActor* OtherActor,  UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep,  FHitResult SweepResult);
+	UFUNCTION(BlueprintCallable)
+	void OnLocallyObservedChanged();
+	UFUNCTION(BlueprintCallable)
+	void OnLevelReadyToPlay();
+	UFUNCTION(BlueprintCallable)
+	void OnIsCrouchedChanged__DelegateSignature(bool isCrouched);
+	UFUNCTION(BlueprintCallable)
+	void OnIntroCompletedNative();
+	UFUNCTION(BlueprintCallable)
+	void OnIntroCompleted();
+	UFUNCTION(BlueprintCallable)
+	void OnInterruptedStart();
+	UFUNCTION(BlueprintCallable)
+	void OnInsaneSkillCheck();
+	UFUNCTION(BlueprintCallable)
+	void OnHeadHidden(bool hidden);
+	UFUNCTION(BlueprintCallable)
+	FString OnGetCharacterName();
+	UFUNCTION(BlueprintCallable)
+	void OnEscapeDoorActivated();
+	UFUNCTION(BlueprintCallable)
+	void OnCurrentMontageComplete( UAnimMontage* MontageAsset, bool interrupted);
+	UFUNCTION(BlueprintCallable)
+	void OnCurrentMontageBlendingOut( UAnimMontage* MontageAsset, bool interrupted);
+	UFUNCTION(BlueprintCallable)
+	void OnClientRestart();
+	UFUNCTION(BlueprintCallable)
+	void OnBlindChargeEmptied();
+	UFUNCTION(BlueprintCallable)
+	void OnAttackStarted(EAttackType attackType);
+	UFUNCTION(BlueprintCallable)
+	void OnAttackFinished(EAttackType attackType);
+	UFUNCTION(BlueprintCallable)
+	void OnAnimInstanceChanged();
+	UFUNCTION(BlueprintCallable)
+	void OnAllPlayerLoaded();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetRunVaultEnabled(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetReverseTraverseEnabled(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetMaxWalkSpeed(float MaxWalkSpeed);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetInteractingPlayer( ADBDPlayer* interactingPlayer);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetForceAuthoritativeMovement(bool value);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetEthereal(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetEnableServerPositionUpdates(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetEnableCapsuleDynamicResize(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetDebugSnapPoint(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetDebugPrintAvailableInteractions(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetDebugCarry(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetCustomization(TArray< FName> customizationParts, TArray< FCharmIdSlot> customizationCharms);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetContinuousPrintDebug(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_SetAuthoritativeMovement(bool Enabled);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_ServerResetMeshRelativeOffSet();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_RequestAttackSubstateChange(EAttackSubstate attackSubstate);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_PlayMontage( FAnimationMontageDescriptor animMontageID, float PlayRate);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_OnInsaneSkillCheck();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_LockOnTarget( ADBDPlayer* Target);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_LeaveGame( FGuid uniqueLeavingPlayerId);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_InteractionRollResult(bool rollResult);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_HitTarget( ADBDPlayer* Target, EAttackType attackType);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_Ghost(bool Ghost);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_ConfirmItemDrop(bool pressed);
+	UFUNCTION(BlueprintCallable)
+	void Multicast_AttackBegin(EAttackType attackType);
+	UFUNCTION(BlueprintCallable)
+	void Local_RequestBlink( FTransform destination);
+	UFUNCTION(BlueprintCallable)
+	void Local_NotifyMatchEnded();
+	UFUNCTION(BlueprintCallable)
+	bool LineTraceSingleForFootIK( FVector Start,  FVector End, bool traceComplex,  FHitResult OutHit);
+	UFUNCTION(BlueprintCallable)
+	bool K2_SetActorLocationByBottomCapsule( FVector NewLocation, bool bSweep,  FHitResult SweepHitResult);
+	UFUNCTION(BlueprintCallable)
+	void ItemUseReleased();
+	UFUNCTION(BlueprintCallable)
+	void ItemUsePressed();
+	UFUNCTION(BlueprintCallable)
+	void ItemDropReleased();
+	UFUNCTION(BlueprintCallable)
+	void ItemDropPressed();
+	UFUNCTION(BlueprintCallable)
+	bool IsStrafing();
+	UFUNCTION(BlueprintCallable)
+	bool IsSnappingRotation();
+	UFUNCTION(BlueprintCallable)
+	bool IsSnappingPosition();
+	UFUNCTION(BlueprintCallable)
+	bool IsSnapping();
+	UFUNCTION(BlueprintCallable)
+	bool IsRunningAndMoving();
+	UFUNCTION(BlueprintCallable)
+	bool IsRunning();
+	UFUNCTION(BlueprintCallable)
+	bool IsPlayingMontage( FAnimationMontageDescriptor animMontageID);
+	UFUNCTION(BlueprintCallable)
+	bool IsPlayingAnyMontage();
+	UFUNCTION(BlueprintCallable)
+	bool IsLocationClear( FVector targetPosition);
+	UFUNCTION(BlueprintCallable)
+	bool IsLocallyObserved();
+	UFUNCTION(BlueprintCallable)
+	bool IsKiller();
+	UFUNCTION(BlueprintCallable)
+	bool IsInTerrorRadius();
+	UFUNCTION(BlueprintCallable)
+	bool IsInteractionInputPressed(EInputInteractionType InteractionType);
+	UFUNCTION(BlueprintCallable)
+	bool IsInStalkMode();
+	UFUNCTION(BlueprintCallable)
+	bool IsInsideCloset();
+	UFUNCTION(BlueprintCallable)
+	bool IsInParadise();
+	UFUNCTION(BlueprintCallable)
+	bool IsInMeathookZone();
+	UFUNCTION(BlueprintCallable)
+	bool IsIncapacitated();
+	UFUNCTION(BlueprintCallable)
+	bool IsInBasement();
+	UFUNCTION(BlueprintCallable)
+	bool IsHeadHidden();
+	UFUNCTION(BlueprintCallable)
+	bool IsFacing( FVector Direction);
+	UFUNCTION(BlueprintCallable)
+	bool IsExhausted();
+	UFUNCTION(BlueprintCallable)
+	bool IsCrouchPressed();
+	UFUNCTION(BlueprintCallable)
+	bool IsCrouching();
+	UFUNCTION(BlueprintCallable)
+	bool IsCloaked();
+	UFUNCTION(BlueprintCallable)
+	bool IsCamper();
+	UFUNCTION(BlueprintCallable)
+	bool IsBeingInterrupted();
+	UFUNCTION(BlueprintCallable)
+	bool IsAllowedNavigation();
+	UFUNCTION(BlueprintCallable)
+	bool IsAIControlled();
+	UFUNCTION(BlueprintCallable)
+	void InteractionInputReleased();
+	UFUNCTION(BlueprintCallable)
+	void InteractionInputPressed();
+	UFUNCTION(BlueprintCallable)
+	void Input_ToggleCrouch();
+	UFUNCTION(BlueprintCallable)
+	void HideHead(bool hide);
+	UFUNCTION(BlueprintCallable)
+	bool HasTrapImmunity();
+	UFUNCTION(BlueprintCallable)
+	bool HasMoveInput();
+	UFUNCTION(BlueprintCallable)
+	bool HasDamageImmunity();
+	UFUNCTION(BlueprintCallable)
+	bool HasClearPathToTargetWithIgnore( FVector targetPosition, TArray< AActor*> ignoreActors);
+	UFUNCTION(BlueprintCallable)
+	bool HasClearPathToTarget( FVector targetPosition);
+	UFUNCTION(BlueprintCallable)
+	bool HasClearPathToItemDropOffPosition();
+	UFUNCTION(BlueprintCallable)
+	bool HasAnimMontageEnded();
+	UFUNCTION(BlueprintCallable)
+	float GetTunableValue( FName Key, float defaultValue, bool warnIfRowMissing);
+	UFUNCTION(BlueprintCallable)
+	USpecialEventSpawnerComponent* GetSpecialEventSpawnerComponent();
+	UFUNCTION(BlueprintCallable)
+	bool GetRunVaultEnabled();
+	UFUNCTION(BlueprintCallable)
+	FString GetRightFootAudioSurfaceName();
+	UFUNCTION(BlueprintCallable)
+	bool GetReverseTraverseEnabled();
+	UFUNCTION(BlueprintCallable)
+	FRotator GetRepControlRotation();
+	UFUNCTION(BlueprintCallable)
+	float GetRemainingTrapImmunityDuration();
+	UFUNCTION(BlueprintCallable)
+	float GetProgressToEscapeCarry( ADBDPlayer* Player);
+	UFUNCTION(BlueprintCallable)
+	EPlayerRole GetPlayerRole();
+	UFUNCTION(BlueprintCallable)
+	UPlayerInteractionHandler* GetPlayerInteractionHandler();
+	UFUNCTION(BlueprintCallable)
+	FRotator GetPlayerDirection();
+	UFUNCTION(BlueprintCallable)
+	ADBDPlayerController* GetPlayerController();
+	UFUNCTION(BlueprintCallable)
+	UCameraComponent* GetPlayerCamera();
+	//UFUNCTION(BlueprintCallable)
+	//UBoxOcclusionQueryComponent GetPixelCounter();
+	UFUNCTION(BlueprintCallable)
+	UPerkManager* GetPerkManager();
+	UFUNCTION(BlueprintCallable)
+	float GetPercentPixelsVisible();
+	UFUNCTION(BlueprintCallable)
+	float GetPercentMovementSpeed();
+	//UFUNCTION(BlueprintCallable)
+	//UGameplayTagContainerComponent GetObjectState();
+	UFUNCTION(BlueprintCallable)
+	bool GetNearbyGroundLocation( FVector groundLocation);
+	UFUNCTION(BlueprintCallable)
+	FString GetNameDebugString();
+	UFUNCTION(BlueprintCallable)
+	UMontagePlayer* GetMontagePlayer();
+	UFUNCTION(BlueprintCallable)
+	FMontagePlaybackDefinition GetMontagePlaybackDefinition( FAnimationMontageDescriptor animMontageID, float PlayRate, bool isFollower);
+	UFUNCTION(BlueprintCallable)
+	float GetMontageLength( FAnimationMontageDescriptor animMontageID);
+	UFUNCTION(BlueprintCallable)
+	UAnimMontage* GetMontage( FAnimationMontageDescriptor animMontageID);
+	UFUNCTION(BlueprintCallable)
+	FVector GetMeshFeetPosition();
+	UFUNCTION(BlueprintCallable)
+	float GetMaxSpeed();
+	UFUNCTION(BlueprintCallable)
+	float GetLuck();
+	UFUNCTION(BlueprintCallable)
+	FString GetLeftFootAudioSurfaceName();
+	UFUNCTION(BlueprintCallable)
+	FVector GetLastSafeLocation();
+	UFUNCTION(BlueprintCallable)
+	TArray<UItemModifier*> GetItemModifiers();
+	UFUNCTION(BlueprintCallable)
+	USceneComponent* GetItemDropOffTransform();
+	UFUNCTION(BlueprintCallable)
+	TArray<UItemAddon*> GetItemAddons();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsInterrupting();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsInteracting();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsInFirstPerson();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsBeyondCrouchWalkSpeed();
+	UFUNCTION(BlueprintCallable)
+	bool GetInteractionRollResult();
+	UFUNCTION(BlueprintCallable)
+	FInteractionPlayerProperties GetInteractionPlayerProperties();
+	UFUNCTION(BlueprintCallable)
+	UInteractionDetectorComponent* GetInteractionDetectorComponent();
+	UFUNCTION(BlueprintCallable)
+	AInteractable* GetInteractable();
+	UFUNCTION(BlueprintCallable)
+	ADBDPlayer* GetGuidingPlayer();
+	UFUNCTION(BlueprintCallable)
+	float GetGrassEffectRadiusMultiplier();
+	UFUNCTION(BlueprintCallable)
+	bool GetForceDisableSkillChecks();
+	UFUNCTION(BlueprintCallable)
+	UActorComponent* GetFirstComponentBy( UClass* Component);
+	UFUNCTION(BlueprintCallable)
+	FVector GetFeetPositionAtTargetLocation( FVector Location);
+	UFUNCTION(BlueprintCallable)
+	FVector GetFeetPosition();
+	UFUNCTION(BlueprintCallable)
+	bool GetFeetOnGround();
+	UFUNCTION(BlueprintCallable)
+	bool GetEnableServerPositionUpdates();
+	UFUNCTION(BlueprintCallable)
+	UCharacterDreamworldComponent* GetDreamworldComponent();
+	UFUNCTION(BlueprintCallable)
+	UPrimitiveComponent* GetDetectionZone(EDetectionZone detectionZoneID);
+	UFUNCTION(BlueprintCallable)
+	bool GetDebugPrintAvailableInteractions();
+	UFUNCTION(BlueprintCallable)
+	bool GetDebugFailAllInteractions();
+	UFUNCTION(BlueprintCallable)
+	ADBDPlayerState* GetDBDPlayerState();
+	UFUNCTION(BlueprintCallable)
+	UCustomizedSkeletalMesh* GetCustomizedSkeletalMesh();
+	UFUNCTION(BlueprintCallable)
+	UCustomizedAudioComponent* GetCustomizedAudio();
+	UFUNCTION(BlueprintCallable)
+	EInteractionAnimation GetCurrentInteractionAnimation();
+	UFUNCTION(BlueprintCallable)
+	UInteractionDefinition* GetCurrentInteraction();
+	UFUNCTION(BlueprintCallable)
+	EAttackType GetCurrentAttackType();
+	UFUNCTION(BlueprintCallable)
+	bool GetContinuousPrintDebug();
+	UFUNCTION(BlueprintCallable)
+	UChaseComponent* GetChaseComponent();
+	UFUNCTION(BlueprintCallable)
+	UCharacterInventoryComponent* GetCharacterInventoryComponent();
+	UFUNCTION(BlueprintCallable)
+	FString GetCharacterAudioSurfaceName();
+	UFUNCTION(BlueprintCallable)
+	FVector GetCapsuleTopPosition();
+	UFUNCTION(BlueprintCallable)
+	FVector GetCapsuleBottomPosition();
+	UFUNCTION(BlueprintCallable)
+	ADBDPlayerCameraManager* GetCameraManager();
+	UFUNCTION(BlueprintCallable)
+	float GetCameraCharacterYawDiff();
+	UFUNCTION(BlueprintCallable)
+	FVector GetBoneRelativeLocation(FName targetBone,  FName relativeBone);
+	//UFUNCTION(BlueprintCallable)
+	//FVector GetBoneLocation(FName Name, EBoneSpaces space);
+	UFUNCTION(BlueprintCallable)
+	float GetBlinkTime();
+	UFUNCTION(BlueprintCallable)
+	UBlindableComponent* GetBlindableComponent();
+	UFUNCTION(BlueprintCallable)
+	float GetBaseFOV();
+	UFUNCTION(BlueprintCallable)
+	FVector GetAverageVelocity();
+	UFUNCTION(BlueprintCallable)
+	UAuthoritativeMovementComponent* GetAuthoritativeMovementComponent();
+	//UFUNCTION(BlueprintCallable)
+	//UAkComponent GetAudioComponent();
+	UFUNCTION(BlueprintCallable)
+	EAttackType GetAttackMontageEvent();
+	UFUNCTION(BlueprintCallable)
+	USceneComponent* GetAttachPoint( FName attachPointName);
+	UFUNCTION(BlueprintCallable)
+	void GetAnimTags(TArray< FName> outTags);
+	UFUNCTION(BlueprintCallable)
+	UAnimInstance* GetAnimInstance();
+	UFUNCTION(BlueprintCallable)
+	FAnimData GetAnimData();
+	UFUNCTION(BlueprintCallable)
+	FVector GetAlmostCurrentVelocity();
+	UFUNCTION(BlueprintCallable)
+	FVector GetActorLocationFromFeetLocation( FVector FeetLocation);
+	UFUNCTION(BlueprintCallable)
+	FVector FindFurthestClearLocationBetweenPoints( FVector startPosition,  FVector targetPosition);
+	UFUNCTION(BlueprintCallable)
+	ADBDPlayer* FindClosestSlashablePlayerInDetectionZone(EDetectionZone detectionZoneID);
+	UFUNCTION(BlueprintCallable)
+	void FastInteractionInputReleased();
+	UFUNCTION(BlueprintCallable)
+	void FastInteractionInputPressed();
+	UFUNCTION(BlueprintCallable)
+	void Dissolve(bool Dissolve);
+	UFUNCTION(BlueprintCallable)
+	void DetachInteractor();
+	UFUNCTION(BlueprintCallable)
+	void DebugPrint( FString inString);
+	UFUNCTION(BlueprintCallable)
+	void DeactivateSkillChecks();
+	UFUNCTION(BlueprintCallable)
+	void DBDUnCrouch();
+	UFUNCTION(BlueprintCallable)
+	void DBDLog( FString LogText);
+	UFUNCTION(BlueprintCallable)
+	void DBDCrouch();
+	UFUNCTION(BlueprintCallable)
+	void DBD_TogglePrintServerPositionUpdateEnabled();
+	UFUNCTION(BlueprintCallable)
+	void DBD_ToggleForceAuthoritativeMovement();
+	UFUNCTION(BlueprintCallable)
+	void DBD_ToggleDebugInteractionInZone();
+	UFUNCTION(BlueprintCallable)
+	void DBD_SetMouseTurnSpeedMultiplier(float value);
+	UFUNCTION(BlueprintCallable)
+	void DBD_SetMouseLookUpSpeedMultiplier(float value);
+	UFUNCTION(BlueprintCallable)
+	void DBD_SetGamePadTurnRate(float value);
+	UFUNCTION(BlueprintCallable)
+	void DBD_SetGamePadLookUpRate(float value);
+	UFUNCTION(BlueprintCallable)
+	void DBD_DebugStartInteraction();
+	UFUNCTION(BlueprintCallable)
+	void Client_TryInteractionType(EInputInteractionType InteractionType,  ADBDPlayer* Requester);
+	UFUNCTION(BlueprintCallable)
+	void Client_SendCancelInteraction();
+	UFUNCTION(BlueprintCallable)
+	void Client_QueueInteraction(EInputInteractionType InteractionType,  ADBDPlayer* Requester, float queuedTimer);
+	UFUNCTION(BlueprintCallable)
+	void Client_ClearInteractionQueue();
+	UFUNCTION(BlueprintCallable)
+	bool CanInterrupt_BP();
+	UFUNCTION(BlueprintCallable)
+	bool CanInteractWithItems();
+	UFUNCTION(BlueprintCallable)
+	bool CanInteract();
+	UFUNCTION(BlueprintCallable)
+	void CancelCarry(bool alsoCancelForOtherPlayer);
+	UFUNCTION(BlueprintCallable)
+	bool CanBeBlinded();
+	UFUNCTION(BlueprintCallable)
+	void CameraUpdated();
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_Server_RequestAttackSubstateChange(EAttackSubstate attackSubstate);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_PlayMontage_Server( FAnimationMontageDescriptor animMontageID, float PlayRate);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_PlayMontage_Multicast( FAnimationMontageDescriptor animMontageID, float PlayRate);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_Multicast_RequestAttackSubstateChange(EAttackSubstate attackSubstate);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_Multicast_BlinkDestination( FVector Position,  FRotator Rotation);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_LockOnTarget_Server( ADBDPlayer* Target);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_LockOnTarget_Multicast( ADBDPlayer* Target);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_HitTarget_Server( ADBDPlayer* Target, EAttackType attackType);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_HitTarget_Multicast( ADBDPlayer* Target, EAttackType attackType);
+	UFUNCTION(BlueprintCallable)
+	void Broadcast_BlinkDestination( FVector Position,  FRotator Rotation);
+	UFUNCTION(BlueprintCallable)
+	bool Authority_TryForceEndOngoingScoreEvent(EDBDScoreTypes scoreType);
+	UFUNCTION(BlueprintCallable)
+	bool Authority_TryForceCancelOngoingScoreEvent(EDBDScoreTypes scoreType);
+	UFUNCTION(BlueprintCallable)
+	void Authority_SetDreamworldComponent( UCharacterDreamworldComponent* Component);
+	UFUNCTION(BlueprintCallable)
+	void Authority_RequestStun(EStunType stunType,  ADBDPlayer* stunner);
+	UFUNCTION(BlueprintCallable)
+	void Authority_RemoveStatusEffectByID( FName statusEffectId, bool bRemoveAllWithID);
+	UFUNCTION(BlueprintCallable)
+	UStatusEffect* Authority_ImposeStatusEffect( FName statusEffectId,  ADBDPlayer* originatingPlayer, float customParam,  UGameplayModifierContainer* originatingEffect, bool shouldDisplay);
+	UFUNCTION(BlueprintCallable)
+	UStatusEffect* Authority_ImposeDynamicStatusEffect( FName statusEffectId,  ADBDPlayer* originatingPlayer, float customParam,  UGameplayModifierContainer* originatingEffect);
+	UFUNCTION(BlueprintCallable)
+	void Authority_HandleScoreEvent( FGameplayTag scoreTypeTag,  FScoreEventData ScoreEventData);
+	UFUNCTION(BlueprintCallable)
+	void Authority_Flashlighted(TArray< AActor*> instigators);
+	UFUNCTION(BlueprintCallable)
+	void Authority_EvaluateIfPlayerCanSee();
+	UFUNCTION(BlueprintCallable)
+	void Authority_EndStatusEffectByID( FName statusEffectId, bool bRemoveAllWithID);
+	UFUNCTION(BlueprintCallable)
+	void Authority_EndOngoingScoreEvent( FGameplayTag scoreTypeTag);
+	UFUNCTION(BlueprintCallable)
+	void Authority_CancelOngoingScoreEvent( FGameplayTag scoreTypeTag);
+	UFUNCTION(BlueprintCallable)
+	void Authority_AttemptEscapeCarry(class ACamperPlayer* Player);
+	UFUNCTION(BlueprintCallable)
+	void Authority_ActivateAuthoritativeMovementOnDropped();
+	UFUNCTION(BlueprintCallable)
+	void AttachInteractor(UInteractor* Interactor);
+	UFUNCTION(BlueprintCallable)
+	void AddDetectionZone(EDetectionZone detectionZoneID,  UPrimitiveComponent* zone);
+	UFUNCTION(BlueprintCallable)
+	void AbilityInputReleased();
+	UFUNCTION(BlueprintCallable)
+	void AbilityInputPressed();
+
+
+
+
+
+	
+	// Sets default values for this actor's properties
+	ADBDPlayer();
+
 protected:
-    UPROPERTY(Export, Transient)
-    UCharacterInventoryComponent* _characterInventoryComponent;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    FName CarryJointName;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float _pitchOffsetForInteractionPriority;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UBoxOcclusionQueryComponent* _renderedPixelCounter;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UBoxComponent* _standingOcclusionBox;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UBoxComponent* _crouchingOcclusionBox;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UActivatorComponent* _activator;
-    
-    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-    bool IsInteracting;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float _aiCanBeSeenTestCrouchScale;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float _aiCanBeSeenTestRightOffset;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float _aiCanBeSeenTestHighOffset;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float _aiCanBeSeenTestLowOffset;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float ClearPathTestRadiusMultiplier;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float ClearPathTestHeightMultiplier;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float LocationClearTestRadiusMultiplier;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float LocationClearTestHeightMultiplier;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    float ClearPathTestStepHeight;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float MouseTurnSpeedMultiplier;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    float MouseLookUpSpeedMultiplier;
-    
-    UPROPERTY(EditDefaultsOnly)
-    USoundCue* DeathSound;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    ECamperState CurrentCamperState;
-    
-    UPROPERTY(EditDefaultsOnly)
-    FName CollectableAttachPoint;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere)
-    UStateMachine* _stateMachine;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere)
-    UPlayerInteractionHandler* _interactionHandler;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere)
-    UMontagePlayer* _montagePlayer;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere)
-    UPerkManager* _perkManager;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere)
-    UDBDPlayerData* _playerData;
-    
-    UPROPERTY(Export, Transient, VisibleDefaultsOnly)
-    UAxisFlickMasher* _wiggleAxisFlickMasher;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_Interactable)
-    APlayerInteractable* _interactable;
-    
-    UPROPERTY(Transient)
-    ADBDPlayer* _guidingPlayer;
-    
-    UPROPERTY(Transient)
-    ADBDPlayer* _interactingPlayer;
-    
-    UPROPERTY(Transient)
-    EAttackSubstate _nextAttackSubstate;
-    
-    UPROPERTY(Transient)
-    TArray<ADBDPlayer*> _hitTargets;
-    
-    UPROPERTY(BlueprintReadWrite, Export, VisibleAnywhere, ReplicatedUsing=OnRep_DreamworldComponent)
-    UCharacterDreamworldComponent* _dreamworldComponent;
-    
-    UPROPERTY(EditAnywhere, Export, Transient)
-    UCharacterChaseVisualComponent* _characterChaseVisualComponent;
-    
-    UPROPERTY(BlueprintReadWrite, Export, Transient, VisibleAnywhere)
-    UCameraHandlerComponent* _cameraHandlerComponent;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UReversibleActionSystemComponent* _reversibleActionSystemComponent;
-    
-    UPROPERTY(BlueprintReadWrite, Export, VisibleAnywhere)
-    USceneComponent* _itemDropOffPosition;
-    
-    UPROPERTY(BlueprintReadWrite, Export, VisibleAnywhere)
-    UAIPerceptionStimuliSourceComponent* _perceptionStimuliComponent;
-    
-    UPROPERTY(Transient)
-    TArray<AActor*> _ignoreActors;
-    
-    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-    TArray<FEffectCameraTypeSettings> EffectCameraTypeSettings;
-    
-    UPROPERTY(Export)
-    UChargeableComponent* _blindingChargeableComponent;
-    
-    UPROPERTY(EditDefaultsOnly)
-    bool _shouldUpdateStateMachineDriverOnPossessed;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere)
-    UBlindableComponent* _blindableComponent;
-    
-private:
-    UPROPERTY(Transient)
-    float _tutorialChargeableInteractionMultiplier;
-    
-    UPROPERTY(Export, Transient)
-    UPollableEventListener* _eventListener;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UChaseComponent* _chaseComponent;
-    
-    UPROPERTY(Export, Transient)
-    UZoneDetectorComponent* _meatHookZoneDetector;
-    
-    UPROPERTY(Export, Transient)
-    UZoneDetectorComponent* _basementZoneDetector;
-    
-    UPROPERTY(Export, Transient)
-    UInteractionDefinition* _bookmarkedInteraction;
-    
-    UPROPERTY(Export, Transient)
-    TMap<EDetectionZone, UPrimitiveComponent*> _detectionZoneMap;
-    
-    UPROPERTY(Export, Transient)
-    UAuthoritativeMovementComponent* _authoritativeMovementComponent;
-    
-    UPROPERTY(Replicated)
-    float _screenAspectRatio;
-    
-    UPROPERTY(Export)
-    UGameplayTagContainerComponent* _objectState;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere, meta=(AllowPrivateAccess=true))
-    UAudioFXComponent* _audioFXComponent;
-    
-    UPROPERTY(Export)
-    UPlayerPerspectiveComponent* _playerPerspectiveComponent;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere, meta=(AllowPrivateAccess=true))
-    UCharacterSightComponent* _characterSightComponent;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere, meta=(AllowPrivateAccess=true))
-    UCharacterSightableComponent* _characterSightableComponent;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere, meta=(AllowPrivateAccess=true))
-    UInteractionDetectorComponent* _interactionDetectorComponent;
-    
-    UPROPERTY(BlueprintReadWrite, Export, meta=(AllowPrivateAccess=true))
-    UPrimitivesRegistererComponent* _clippablePrimitivesRegistererComponent;
-    
-    UPROPERTY(BlueprintReadOnly, Export, VisibleAnywhere, meta=(AllowPrivateAccess=true))
-    UClippableProviderComponent* _clippableProviderComponent;
-    
-    UPROPERTY(Export, VisibleAnywhere)
-    UDynamicCapsuleResizerComponent* _dynCapsuleResizer;
-    
-    UPROPERTY(Export)
-    UPlayerGameRelevancyComponent* _playerGameRelevancyComponent;
-    
-    UPROPERTY(Export, Transient)
-    UContextualQuestComponent* _contextualQuestComponent;
-    
-    UPROPERTY(Export)
-    UActorComponent* _questEventHandler;
-    
-    UPROPERTY(Export, Transient)
-    UChargeableProgressProviderComponent* _presentationChargeableProgressComponent;
-    
-    UPROPERTY(Transient)
-    UCurveFloat* _currentGamepadYawCurve;
-    
-    UPROPERTY(Transient)
-    UCurveFloat* _currentGamepadPitchCurve;
-    
-    UPROPERTY(Transient)
-    ADBDPlayerState* _associatedPlayerStateCache;
-    
-    UPROPERTY(Export, Transient)
-    UOtherCharactersVerticalCollisionsHandler* _otherCharactersVerticalCollisionsHandler;
-    
-public:
-    ADBDPlayer();
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
-    UFUNCTION()
-    void UpdateLoadoutFromInventory();
-    
-    UFUNCTION(BlueprintCallable)
-    bool TryInteractionType(EInputInteractionType interactionInputType, ADBDPlayer* requester, bool usingInputPersistence);
-    
-    UFUNCTION(BlueprintCallable)
-    bool TryInteraction(UInteractionDefinition* interaction, ADBDPlayer* requester, bool force, bool usingInputPersistence);
-    
-    UFUNCTION(BlueprintCallable)
-    bool TryFireScoreEvent(EDBDScoreTypes scoreType, float percentToAward);
-    
-    UFUNCTION(BlueprintCallable)
-    void TriggerTrapImmunity(float duration);
-    
-    UFUNCTION(BlueprintCallable)
-    void TriggerAnimNotify(EAnimNotifyType animNotifyType);
-    
-    UFUNCTION(BlueprintCallable)
-    void ToggleGhost();
-    
-    UFUNCTION(BlueprintCallable)
-    bool TeleportToBP(const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest, bool bNoCheck);
-    
-    UFUNCTION(BlueprintCallable)
-    void StopSnap(bool snap);
-    
-    UFUNCTION(BlueprintCallable)
-    void StopMontage();
-    
-    UFUNCTION(BlueprintCallable)
-    void StopAllMovement();
-    
-    UFUNCTION(BlueprintCallable)
-    void SnapCharacter(bool snapPosition, FVector position, float stopSnapDistance, bool snapRotation, FRotator rotation, float time, bool useZCoord, bool sweepOnFinalSnap, bool snapRoll);
-    
-    UFUNCTION(BlueprintPure)
-    bool ShouldPlayCarryAnim() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool ShouldFall() const;
-    
-    UFUNCTION(BlueprintCallable)
-    void SetWorldCollisionResponse(TEnumAsByte<ECollisionResponse> response);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetTutorialChargeableInteractionMultiplier(float multiplierValue);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetShouldPlayCarryAnim(bool NewShouldPlayCarryAnim);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetReverseMontage(bool reverse);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetQuestEventHandlerComponent(UActorComponent* component);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetPlayerDirection(FRotator rotation);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetPawnAuthoritativeMovement(bool authoritative);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetMouseYawScale(float yawScale, float adjustTime);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetMousePitchScale(float pitchScale, float adjustTime);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetItemUseAsToggle(bool value);
-    
-protected:
-    UFUNCTION(BlueprintCallable)
-    void SetIsCloaked(bool NewIsCloaked, bool forced);
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void SetInParadise(bool inParadise);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetIgnoreActorCollision(AActor* ActorToIgnore, bool ignore);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetGuidingPlayer(ADBDPlayer* guidingPlayer);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetGamepadYawScale(float yawScale, float adjustTime);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetGamepadPitchScale(float pitchScale, float adjustTime);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetForceDisableSkillChecks(bool isEnabled);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetFirstPersonVfxsVisibility(bool isFirstPerson);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetFirstPersonModelEnabled(bool enabled, bool force);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetFirstPersonMeshVisibility(bool isFirstPerson);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetFeetOnGround(bool feetOnGround);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetEmulateGamepadForMouseYaw(bool emulate);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetEmulateGamepadForMousePitch(bool emulate);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetDetectionZoneEnabled(EDetectionZone detectionZoneID, bool enabled);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetCurrentInteractionAnimation(EInteractionAnimation animation);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetAuthoritativeMovementFlag(EAuthoritativeMovementFlag flagIndex, bool enabled);
-    
-protected:
-    UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-    void SetAnimationCrouchState(bool crouched);
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void SetAllowNavigation(bool enable);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetAllDetectionZonesEnabled(bool enabled);
-    
-private:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_UpdateScreenAspectRatio(const float value);
-    
-public:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SetCustomization(const TArray<FName>& customizationParts, const TArray<FCharmIdSlot>& customizationCharms);
-    
-private:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendSecondaryActionPressed(bool fromCancelRequest);
-    
-protected:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendItemUseInput(bool pressed);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendItemUse(bool use);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendItemDropInput(bool pressed);
-    
-public:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendInteractionInput(bool pressed);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendFastInteractionInput(bool pressed);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_SendAbilityInput(bool pressed);
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_PlayerReady();
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_OnInsaneSkillCheck();
-    
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Server_Drop(ACollectable* item, const FVector& location, const FRotator& rotation, bool onDeath);
-    
-    UFUNCTION(BlueprintCallable)
-    void SecondaryActionInputPressed();
-    
-    UFUNCTION(BlueprintCallable)
-    void ResetYawScale(float adjustTime);
-    
-    UFUNCTION(BlueprintCallable)
-    void ResetPitchScale(float adjustTime);
-    
-    UFUNCTION(BlueprintCallable)
-    void ResetMeshRelativeRotation();
-    
-    UFUNCTION(BlueprintCallable)
-    void ResetMeshRelativePosition();
-    
-    UFUNCTION(BlueprintCallable)
-    void ResetCamera();
-    
-    UFUNCTION(BlueprintCallable)
-    void RemoveStatusEffect(UStatusEffect* statusEffect);
-    
-    UFUNCTION(BlueprintCallable)
-    void Remotely_HandleScoreEvent(FGameplayTag scoreTypeTag, FScoreEventData scoreEventData);
-    
-    UFUNCTION(BlueprintCallable)
-    UAnimMontage* PlayMontage(FAnimationMontageDescriptor animMontageID, float playRate, bool isFollower);
-    
-protected:
-    UFUNCTION()
-    void OnRep_Interactable();
-    
-    UFUNCTION()
-    void OnRep_DreamworldComponent();
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void OnPickupStart(ADBDPlayer* target);
-    
-    UFUNCTION(BlueprintCallable)
-    void OnPickupEnd(ADBDPlayer* target);
-    
-protected:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnLocallyObservedChanged();
-    
-public:
-    UFUNCTION(BlueprintNativeEvent)
-    void OnLevelReadyToPlay();
-    
-protected:
-    UFUNCTION()
-    void OnIntroCompletedNative();
-    
-public:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnIntroCompleted();
-    
-protected:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnInterruptedStart();
-    
-public:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnInsaneSkillCheck();
-    
-protected:
-    UFUNCTION()
-    void OnHudVisibilityChangedNative(const bool isVisible);
-    
-public:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnHudVisibilityChanged(const bool isVisible);
-    
-    UFUNCTION(BlueprintNativeEvent)
-    FString OnGetCharacterName() const;
-    
-protected:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnEscapeDoorActivated();
-    
-private:
-    UFUNCTION()
-    void OnCurrentMontageComplete(UAnimMontage* MontageAsset, bool interrupted);
-    
-    UFUNCTION()
-    void OnCurrentMontageBlendingOut(UAnimMontage* MontageAsset, bool interrupted);
-    
-public:
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnClientRestart();
-    
-protected:
-    UFUNCTION()
-    void OnBlindChargeEmptied();
-    
-private:
-    UFUNCTION()
-    void OnAnimInstanceChanged();
-    
-public:
-    UFUNCTION()
-    void OnAllPlayerLoaded();
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetRunVaultEnabled(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetReverseTraverseEnabled(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetMaxWalkSpeed(float maxWalkSpeed);
-    
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SetInteractingPlayer(ADBDPlayer* interactingPlayer);
-    
-private:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetForceAuthoritativeMovement(bool value);
-    
-public:
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SetEnableCapsuleDynamicResize(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetDebugSnapPoint(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetDebugPrintAvailableInteractions(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetDebugCarry(bool enabled);
-    
-protected:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetCustomization(const TArray<FName>& customizationParts, const TArray<FCharmIdSlot>& customizationCharms);
-    
-public:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetContinuousPrintDebug(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_SetAuthoritativeMovement(bool enabled);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_ServerResetMeshRelativeOffSet();
-    
-protected:
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_ReplicateController(AController* newController);
-    
-public:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_PlayMontage(FAnimationMontageDescriptor animMontageID, float playRate);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_OnInsaneSkillCheck();
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_LeaveGame(FGuid uniqueLeavingPlayerId);
-    
-    UFUNCTION(BlueprintCallable, NetMulticast, Reliable, WithValidation)
-    void Multicast_InteractionRollResult(bool rollResult);
-    
-protected:
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Multicast_ConfirmItemDrop(bool pressed);
-    
-public:
-    UFUNCTION(BlueprintNativeEvent)
-    void Local_NotifyMatchEnded();
-    
-    UFUNCTION(BlueprintPure)
-    bool Local_IsInteractionInputPressed(EInputInteractionType interactionType) const;
-    
-    UFUNCTION(BlueprintCallable)
-    bool K2_SetActorLocationByBottomCapsule(FVector NewLocation, bool bSweep, FHitResult& SweepHitResult);
-    
-    UFUNCTION(BlueprintCallable)
-    void ItemUseReleased();
-    
-    UFUNCTION(BlueprintCallable)
-    void ItemUsePressed();
-    
-    UFUNCTION(BlueprintCallable)
-    void ItemDropReleased();
-    
-    UFUNCTION(BlueprintCallable)
-    void ItemDropPressed();
-    
-    UFUNCTION(BlueprintPure)
-    bool IsStrafing() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsSnappingRotation() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsSnappingPosition() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsSnapping() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsRunningAndMoving() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsRunning() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsPlayingMontage(FAnimationMontageDescriptor animMontageID) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsPlayingAnyMontage() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsMoving() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsLocationClear(FVector targetPosition) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsLocallyObserved() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInTerrorRadius() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInteractionInputPressed(EInputInteractionType interactionType) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInStalkMode() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInsideCloset() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInParadise() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInMeathookZone() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsIncapacitated() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsInBasement() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsHeadHidden() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsFacing(FVector direction) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsExhausted() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsCrouchPressed() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsCrouching() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsCloaked() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsBeingInterrupted() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsAllowedNavigation() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsAIControlled() const;
-    
-    UFUNCTION(BlueprintCallable)
-    void InteractionInputReleased();
-    
-    UFUNCTION(BlueprintCallable)
-    void InteractionInputPressed();
-    
-    UFUNCTION(BlueprintCallable)
-    void Input_ToggleCrouch();
-    
-    UFUNCTION(BlueprintCallable)
-    void HideHead(bool hide);
-    
-    UFUNCTION(BlueprintPure)
-    bool HasTrapImmunity() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasMoveInput() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasDamageImmunity() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasClearPathToTargetWithIgnore(FVector targetPosition, const TArray<AActor*>& ignoreActors) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasClearPathToTarget(FVector targetPosition) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasClearPathToItemDropOffPosition() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool HasAnimMontageEnded() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetTunableValue(FName key, float defaultValue, bool warnIfRowMissing) const;
-    
-    UFUNCTION(BlueprintNativeEvent)
-    ADBDPlayerController* GetSharedPlayerController() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetRunVaultEnabled() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetReverseTraverseEnabled() const;
-    
-    UFUNCTION(BlueprintPure)
-    FRotator GetRepControlRotation() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetRemainingTrapImmunityDuration() const;
-    
-    UFUNCTION(BlueprintPure)
-    EPlayerTeam GetPlayerTeam() const;
-    
-    UFUNCTION(BlueprintPure)
-    EPlayerRole GetPlayerRole() const;
-    
-    UFUNCTION(BlueprintPure)
-    UPlayerInteractionHandler* GetPlayerInteractionHandler() const;
-    
-    UFUNCTION(BlueprintPure)
-    FRotator GetPlayerDirection() const;
-    
-    UFUNCTION(BlueprintPure)
-    ADBDPlayerController* GetPlayerController() const;
-    
-    UFUNCTION(BlueprintPure)
-    UCameraComponent* GetPlayerCamera() const;
-    
-    UFUNCTION(BlueprintPure)
-    UBoxOcclusionQueryComponent* GetPixelCounter();
-    
-    UFUNCTION(BlueprintPure)
-    UPerkManager* GetPerkManager() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetPercentPixelsVisible() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetPercentMovementSpeed() const;
-    
-    UFUNCTION(BlueprintPure)
-    EPawnType GetPawnType() const;
-    
-    UFUNCTION(BlueprintPure)
-    UOtherCharactersVerticalCollisionsHandler* GetOtherCharactersVerticalCollisionsHandler() const;
-    
-    UFUNCTION(BlueprintPure)
-    UGameplayTagContainerComponent* GetObjectState() const;
-    
-protected:
-    UFUNCTION(BlueprintCallable)
-    bool GetNearbyGroundLocation(FVector& groundLocation);
-    
-public:
-    UFUNCTION(BlueprintPure)
-    FString GetNameDebugString() const;
-    
-    UFUNCTION(BlueprintPure)
-    UMontagePlayer* GetMontagePlayer() const;
-    
-    UFUNCTION(BlueprintPure)
-    FMontagePlaybackDefinition GetMontagePlaybackDefinition(FAnimationMontageDescriptor animMontageID, float playRate, bool isFollower) const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetMontageLength(FAnimationMontageDescriptor animMontageID) const;
-    
-    UFUNCTION(BlueprintPure)
-    UAnimMontage* GetMontage(FAnimationMontageDescriptor animMontageID) const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetMeshFeetPosition() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetMaxSpeed() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetLuck() const;
-    
-protected:
-    UFUNCTION(BlueprintPure)
-    FVector GetLastSafeLocation() const;
-    
-public:
-    UFUNCTION(BlueprintPure)
-    TArray<UItemModifier*> GetItemModifiers() const;
-    
-    UFUNCTION(BlueprintPure)
-    USceneComponent* GetItemDropOffTransform() const;
-    
-    UFUNCTION(BlueprintPure)
-    TArray<UItemAddon*> GetItemAddons() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetIsInterrupting() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetIsInteracting() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetIsInFirstPerson() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetIsBeyondCrouchWalkSpeed() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetInteractionRollResult() const;
-    
-    UFUNCTION(BlueprintCallable)
-    FInteractionPlayerProperties GetInteractionPlayerProperties();
-    
-    UFUNCTION(BlueprintPure)
-    UInteractionDetectorComponent* GetInteractionDetectorComponent() const;
-    
-    UFUNCTION(BlueprintPure)
-    AInteractable* GetInteractable() const;
-    
-    UFUNCTION(BlueprintPure)
-    ADBDPlayer* GetGuidingPlayer() const;
-    
-    UFUNCTION(BlueprintNativeEvent)
-    float GetGrassEffectRadiusMultiplier() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetForceDisableSkillChecks() const;
-    
-    UFUNCTION(BlueprintPure)
-    UActorComponent* GetFirstComponentByClass(TSubclassOf<UActorComponent> ComponentClass) const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetFeetPositionAtTargetLocation(FVector location) const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetFeetPosition() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetFeetOnGround() const;
-    
-    UFUNCTION(BlueprintPure)
-    UCharacterDreamworldComponent* GetDreamworldComponent() const;
-    
-    UFUNCTION(BlueprintPure)
-    UPrimitiveComponent* GetDetectionZone(EDetectionZone detectionZoneID) const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetDebugPrintAvailableInteractions() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetDebugFailAllInteractions() const;
-    
-    UFUNCTION(BlueprintPure)
-    ADBDPlayerState* GetDBDPlayerState() const;
-    
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-    UCustomizedSkeletalMesh* GetCustomizedSkeletalMesh();
-    
-    UFUNCTION(BlueprintPure)
-    EInteractionAnimation GetCurrentInteractionAnimation() const;
-    
-    UFUNCTION(BlueprintPure)
-    UInteractionDefinition* GetCurrentInteraction() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetContinuousPrintDebug() const;
-    
-    UFUNCTION(BlueprintPure)
-    UChaseComponent* GetChaseComponent() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetChargeableInteractionMultiplier() const;
-    
-    UFUNCTION(BlueprintPure)
-    UCharacterInventoryComponent* GetCharacterInventoryComponent() const;
-    
-    UFUNCTION(BlueprintPure)
-    ADBDPlayerCameraManager* GetCameraManager() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetCameraCharacterYawDiff() const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetBoneRelativeLocation(FName targetBone, FName relativeBone) const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetBoneLocation(FName name, TEnumAsByte<EBoneSpaces::Type> space) const;
-    
-    UFUNCTION(BlueprintPure)
-    UBlindableComponent* GetBlindableComponent() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetBaseFOV() const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetAverageVelocity() const;
-    
-    UFUNCTION(BlueprintPure)
-    UAuthoritativeMovementComponent* GetAuthoritativeMovementComponent() const;
-    
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-    USceneComponent* GetAttachPoint(FName attachPointName) const;
-    
-    UFUNCTION(BlueprintNativeEvent)
-    APlayerState* GetAssociatedPlayerState() const;
-    
-    UFUNCTION(BlueprintPure)
-    void GetAnimTags(TArray<FName>& outTags) const;
-    
-    UFUNCTION(BlueprintPure)
-    UAnimInstance* GetAnimInstance() const;
-    
-    UFUNCTION(BlueprintPure)
-    FAnimData GetAnimData();
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetAlmostCurrentVelocity() const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector GetActorLocationFromFeetLocation(const FVector FeetLocation) const;
-    
-    UFUNCTION(BlueprintPure)
-    FVector FindFurthestClearLocationBetweenPoints(FVector startPosition, FVector targetPosition) const;
-    
-    UFUNCTION(BlueprintPure)
-    ADBDPlayer* FindClosestSlashablePlayerInDetectionZone(EDetectionZone detectionZoneID) const;
-    
-    UFUNCTION(BlueprintPure)
-    ACharacter* FindClosestSlashableCharacterInDetectionZone(EDetectionZone detectionZoneID) const;
-    
-    UFUNCTION(BlueprintCallable)
-    void FastInteractionInputReleased();
-    
-    UFUNCTION(BlueprintCallable)
-    void FastInteractionInputPressed();
-    
-    UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-    void Dissolve(bool NewDissolve);
-    
-    UFUNCTION(BlueprintCallable)
-    void DetachInteractor();
-    
-    UFUNCTION(BlueprintCallable, BlueprintPure=false)
-    void DebugPrint(const FString& InString) const;
-    
-    UFUNCTION(BlueprintCallable)
-    void DeactivateSkillChecks();
-    
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    void DBDUnCrouch();
-    
-    UFUNCTION(BlueprintCallable)
-    void DBDLog(const FString& logText);
-    
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    void DBDCrouch();
-    
-private:
-    UFUNCTION(Exec)
-    void DBD_ToggleForceAuthoritativeMovement();
-    
-public:
-    UFUNCTION(Exec)
-    void DBD_ToggleDebugInteractionInZone();
-    
-protected:
-    UFUNCTION(Exec)
-    void DBD_SetMouseTurnSpeedMultiplier(float value);
-    
-    UFUNCTION(Exec)
-    void DBD_SetMouseLookUpSpeedMultiplier(float value);
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void DBD_SetForwardInputLock(bool isLocked);
-    
-    UFUNCTION(Exec)
-    void DBD_DebugStartInteraction();
-    
-    UFUNCTION(BlueprintCallable, Client, Reliable, WithValidation)
-    void Client_TryInteractionType(EInputInteractionType interactionType, ADBDPlayer* requester);
-    
-    UFUNCTION(Client, Reliable)
-    void Client_TryInteraction(UInteractionDefinition* interaction, ADBDPlayer* requester, bool force, bool usingInputPersistence);
-    
-    UFUNCTION(BlueprintCallable, Client, Reliable, WithValidation)
-    void Client_SendCancelInteraction(const UInteractionDefinition* interactionDefinition);
-    
-    UFUNCTION(BlueprintCallable, Client, Reliable, WithValidation)
-    void Client_QueueInteraction(EInputInteractionType InteractionType, ADBDPlayer* Requester, float queuedTimer);
-    
-    UFUNCTION(BlueprintCallable, Client, Reliable, WithValidation)
-    void Client_ClearInteractionQueue();
-    
-protected:
-    UFUNCTION(BlueprintNativeEvent)
-    bool CanInterrupt_BP() const;
-    
-public:
-    UFUNCTION(BlueprintPure)
-    bool CanInteractWithItems() const;
-    
-    UFUNCTION(BlueprintCallable)
-    bool CanInteract();
-    
-    UFUNCTION(BlueprintCallable)
-    void CancelCarry(bool alsoCancelForOtherPlayer);
-    
-    UFUNCTION(BlueprintPure)
-    bool CanBeBlinded() const;
-    
-    UFUNCTION(BlueprintCallable)
-    void CameraUpdated();
-    
-protected:
-    UFUNCTION(Reliable, Server, WithValidation)
-    void Broadcast_PlayMontage_Server(FAnimationMontageDescriptor animMontageID, float playRate);
-    
-    UFUNCTION(NetMulticast, Reliable, WithValidation)
-    void Broadcast_PlayMontage_Multicast(FAnimationMontageDescriptor animMontageID, float playRate);
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    bool Authority_TryForceEndOngoingScoreEvent(EDBDScoreTypes scoreType);
-    
-    UFUNCTION(BlueprintCallable)
-    bool Authority_TryForceCancelOngoingScoreEvent(EDBDScoreTypes scoreType);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_SetDreamworldComponent(UCharacterDreamworldComponent* component);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_RequestStun(EStunType stunType, ADBDPlayer* stunner);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_RemoveStatusEffectByID(FName statusEffectId, bool bRemoveAllWithID);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    UStatusEffect* Authority_ImposeStatusEffect(FName statusEffectID, ADBDPlayer* originatingPlayer, float customParam, UGameplayModifierContainer* originatingEffect, bool shouldDisplay, float lifetime);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    UStatusEffect* Authority_ImposeDynamicStatusEffect(FName statusEffectID, ADBDPlayer* originatingPlayer, float customParam, UGameplayModifierContainer* originatingEffect);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_HandleScoreEvent(FGameplayTag scoreTypeTag, FScoreEventData scoreEventData);
-    
-private:
-    UFUNCTION()
-    void Authority_EvaluateIfPlayerCanSee();
-    
-public:
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_EndStatusEffectByID(FName statusEffectId, bool bRemoveAllWithID);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_EndOngoingScoreEvent(FGameplayTag scoreTypeTag);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_CancelOngoingScoreEvent(FGameplayTag scoreTypeTag);
-    
-    UFUNCTION(BlueprintCallable)
-    void Authority_ActivateAuthoritativeMovementOnDropped();
-    
-    UFUNCTION(BlueprintCallable)
-    void AttachInteractor(UInteractor* interactor);
-    
-    UFUNCTION(BlueprintCallable)
-    void AddDetectionZone(EDetectionZone detectionZoneID, UPrimitiveComponent* zone);
-    
-    UFUNCTION(BlueprintCallable)
-    void AbilityInputReleased();
-    
-    UFUNCTION(BlueprintCallable)
-    void AbilityInputPressed();
-    
-    
-    // Fix for true pure virtual functions not being implemented
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 };
-

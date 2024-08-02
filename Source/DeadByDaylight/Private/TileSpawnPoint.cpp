@@ -1,35 +1,27 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "TileSpawnPoint.h"
-#include "Net/UnrealNetwork.h"
 
-class AActor;
-
-void UTileSpawnPoint::SetActivated(bool activated) {
+// Sets default values for this component's properties
+UTileSpawnPoint::UTileSpawnPoint()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UTileSpawnPoint::OnRep_SpawnObject() {
+
+// Called when the game starts
+void UTileSpawnPoint::BeginPlay()
+{	
 }
 
-bool UTileSpawnPoint::IsActivated() const {
-    return false;
+
+// Called every frame
+void UTileSpawnPoint::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-AActor* UTileSpawnPoint::GetSpawnedObject() const {
-    return NULL;
-}
-
-void UTileSpawnPoint::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
-    DOREPLIFETIME(UTileSpawnPoint, _spawnedObject);
-}
-
-UTileSpawnPoint::UTileSpawnPoint() {
-    this->TileSpawnPointType = ETileSpawnPointType::Unspecified;
-    this->Weight = 1.00f;
-    this->_spawnedObject = NULL;
-    this->_spawnPriorityTier = 1;
-    this->_weightInfluenceable = true;
-    this->_weightInfluencer = true;
-    this->_activated = false;
-}
-
+void UTileSpawnPoint::OnRep_SpawnObject(){}
+AActor* UTileSpawnPoint::GetSpawnedObject(){return nullptr;}

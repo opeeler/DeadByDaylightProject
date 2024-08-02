@@ -1,139 +1,92 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
-#include "Templates/SubclassOf.h"
 #include "GameplayModifierContainer.h"
-#include "GameplayModifierData.h"
-#include "OnTokenCountChangedBPDelegate.h"
-#include "PerkInitializationData.h"
+#include "BasePerkIconStrategy.h"
+#include "UObject/WeakObjectPtr.h"
 #include "Perk.generated.h"
 
-class UBasePerkIconStrategy;
-class UTimerObject;
+/**
+ * 
+ */
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTokenCountChanged, int, tokenCount); //possible wrong
+UCLASS(Blueprintable, BlueprintType)
+class DEADBYDAYLIGHT_API UPerk : public UGameplayModifierContainer
+{
+	GENERATED_BODY()
+public:
+	
 
-UCLASS(meta=(BlueprintSpawnableComponent))
-class DEADBYDAYLIGHT_API UPerk : public UGameplayModifierContainer {
-    GENERATED_BODY()
-public:
-protected:
-    UPROPERTY(EditAnywhere, EditFixedSize, ReplicatedUsing=OnRep_PerkLevelData)
-    FGameplayModifierData PerkLevelData[3];
-    
-    UPROPERTY(EditAnywhere)
-    TSubclassOf<UBasePerkIconStrategy> PerkIconStrategyClass;
-    
-    UPROPERTY(BlueprintAssignable)
-    FOnTokenCountChangedBP OnTokenCountChangedBP;
-    
-private:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, ReplicatedUsing=OnRep_IsUsable, meta=(AllowPrivateAccess=true))
-    bool _isUsable;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(AllowPrivateAccess=true))
-    bool BroadcastWhenApplicable;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(AllowPrivateAccess=true))
-    bool BroadcastOnTimer;
-    
-    UPROPERTY(EditAnywhere)
-    bool BroadcastCooldownTimer;
-    
-    UPROPERTY(EditAnywhere)
-    bool BroadcastInactiveCooldownTimer;
-    
-    UPROPERTY(EditAnywhere)
-    bool BroadcastAlways;
-    
-    UPROPERTY(Transient)
-    UBasePerkIconStrategy* _perkIconStrategy;
-    
-    UPROPERTY(Transient, ReplicatedUsing=OnRep_PerkInitializationData)
-    FPerkInitializationData _perkInitializationData;
-    
-    UPROPERTY(BlueprintReadWrite, Transient, ReplicatedUsing=OnRep_TokenCount, meta=(AllowPrivateAccess=true))
-    int32 _tokenCount;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, meta=(AllowPrivateAccess=true))
-    int32 _maxTokenCount;
-    
-    UPROPERTY(Export, Transient, ReplicatedUsing=OnRep_CooldownTimer)
-    UTimerObject* _cooldownTimer;
-    
-    UPROPERTY(Export, Replicated, Transient)
-    UTimerObject* _hudIconTimer;
-    
-public:
-    UPerk();
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
-    UFUNCTION(BlueprintCallable)
-    void SetIsUsable(bool value);
-    
-private:
-    UFUNCTION()
-    void OnRep_TokenCount(int32 oldCount);
-    
-    UFUNCTION()
-    void OnRep_PerkLevelData();
-    
-    UFUNCTION()
-    void OnRep_PerkInitializationData();
-    
-    UFUNCTION()
-    void OnRep_IsUsable() const;
-    
-    UFUNCTION()
-    void OnRep_CooldownTimer() const;
-    
-public:
-    UFUNCTION(BlueprintPure)
-    bool IsHudIconTimerDone() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool IsCooldownTimerDone() const;
-    
-    UFUNCTION(BlueprintPure)
-    int32 GetTokenCount() const;
-    
-    UFUNCTION(BlueprintPure)
-    int32 GetPerkLevel() const;
-    
-    UFUNCTION(BlueprintPure)
-    int32 GetMaxTokenCount() const;
-    
-    UFUNCTION(BlueprintPure)
-    bool GetIsUsable() const;
-    
-    UFUNCTION(BlueprintPure)
-    float GetHudIconTimerElapsedTimePercent() const;
-    
-protected:
-    UFUNCTION(BlueprintPure)
-    UTimerObject* GetCooldownTimer() const;
-    
-public:
-    UFUNCTION(BlueprintCallable)
-    void FireActivePerkEvent(const float percentage, const int32 chargeCount);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_TriggerHudIconTimer(float duration);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_TriggerCooldownTimer(const float coolddownTime);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_SetTokenCount(int32 value);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_SetMaxTokenCount(int32 value);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_SetIsUsable(bool value);
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_IncrementToken();
-    
-    UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-    void Authority_DecrementToken();
-    
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FGameplayModifierData> PerkLevelData;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 _perkLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UBasePerkIconStrategy> PerkIconStrategyClass;
+	UPROPERTY(EditAnywhere, BlueprintAssignable, BlueprintReadWrite)
+		FTokenCountChanged OnTokenCountChangedBP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool _isUsable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool BroadcastWhenApplicable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool BroadcastOnTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool BroadcastCooldownTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool BroadcastInactiveCooldownTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool BroadcastAlways;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UBasePerkIconStrategy* _perkIconStrategy;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EInputInteractionType _activatableInteractionInputType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 _tokenCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 _maxTokenCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UTimerObject* _cooldownTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UTimerObject* _hudIconTimer;
+
+		//WIP. Some "functions" are actually events but just aren't created as such yet. Events have the Event and or BlueprintEvent flags
+
+	UFUNCTION(BlueprintCallable)
+	void TriggerTimerActivePerkEvent();
+	UFUNCTION(BlueprintCallable)
+	void SetIsUsable(bool value);
+	UFUNCTION(BlueprintCallable)
+	void ResetCooldownTimer();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_TokenCount(int oldCount);
+	UFUNCTION(BlueprintCallable)
+	void OnRep_CooldownTimer();
+	UFUNCTION(BlueprintCallable)
+	void Multicast_InitializePerk(FName PerkId, int PerkLevel, EInputInteractionType activatableInteractionInputType);
+	UFUNCTION(BlueprintCallable)
+	bool IsCooldownTimerDone();
+	UFUNCTION(BlueprintCallable)
+	int GetTokenCount();
+	UFUNCTION(BlueprintCallable)
+	int GetPerkLevel();
+	UFUNCTION(BlueprintCallable)
+	int GetMaxTokenCount();
+	UFUNCTION(BlueprintCallable)
+	bool GetIsUsable();
+	UFUNCTION(BlueprintCallable)
+	void FireActivePerkEvent(float percentage, int chargeCount);
+	UFUNCTION(BlueprintCallable)
+	void Authority_TriggerCooldownTimer(float coolddownTime);
+	UFUNCTION(BlueprintCallable)
+	void Authority_SetTokenCount(int value);
+	UFUNCTION(BlueprintCallable)
+	void Authority_SetMaxTokenCount(int value);
+	UFUNCTION(BlueprintCallable)
+	void Authority_IncrementToken();
+	UFUNCTION(BlueprintCallable)
+	void Authority_DecrementToken();
 };
-

@@ -1,37 +1,30 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "ActorSpawner.h"
 
-class AActor;
-
-bool UActorSpawner::UseActivatedElement() {
-    return false;
+// Sets default values for this component's properties
+UActorSpawner::UActorSpawner()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
-bool UActorSpawner::IsEnabled() const {
-    return false;
+
+// Called when the game starts
+void UActorSpawner::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
-void UActorSpawner::EditorForceSpawnVisualization() {
+
+// Called every frame
+void UActorSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UActorSpawner::AuthoritySelect(bool selected) {
-}
-
-AActor* UActorSpawner::AuthorityGetSpawnedActor() const {
-    return NULL;
-}
-
-void UActorSpawner::Authority_SpawnActorAsyncEvent() {
-}
-
-UActorSpawner::UActorSpawner() {
-    this->Type = EGameplayElementType::Generic;
-    this->ActivatedByDefault = true;
-    this->Weight = 1.00f;
-    this->SpawnCountMax = 1;
-    this->SpawnPriorityTier = 1;
-    this->WeightInfluenceable = true;
-    this->WeightInfluencer = true;
-    this->Cost = 1.00f;
-    this->_toSpawn = NULL;
-}
-
+bool UActorSpawner::UseActivatedElement(){return false;}
+void UActorSpawner::EditorForceSpawnVisualization(){}
+AActor* UActorSpawner::AuthorityGetSpawnedActor(){return nullptr;}
+void UActorSpawner::Authority_SpawnActorAsyncEvent(){}

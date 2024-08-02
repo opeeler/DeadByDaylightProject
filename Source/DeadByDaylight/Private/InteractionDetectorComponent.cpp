@@ -1,29 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "InteractionDetectorComponent.h"
 
-class UPrimitiveComponent;
-class ADBDPlayer;
-class AActor;
+// Sets default values for this component's properties
+UInteractionDetectorComponent::UInteractionDetectorComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-void UInteractionDetectorComponent::SetDetectionPrimitive(UPrimitiveComponent* detectionPrimitive) {
+	// ...
 }
 
-void UInteractionDetectorComponent::OnLocallyObservedChanged(ADBDPlayer* player) {
+
+// Called when the game starts
+void UInteractionDetectorComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-UPrimitiveComponent* UInteractionDetectorComponent::GetDetectionPrimitive() const {
-    return NULL;
-}
 
-void UInteractionDetectorComponent::EndOverlapCallback(UPrimitiveComponent* hitComponent, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex) {
-}
+// Called every frame
+void UInteractionDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-void UInteractionDetectorComponent::BeginOverlapCallback(UPrimitiveComponent* hitComponent, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult) {
-}
-
-void UInteractionDetectorComponent::AddIgnoredActor(AActor* ignored) {
-}
-
-UInteractionDetectorComponent::UInteractionDetectorComponent() {
-    this->_detectionPrimitive = NULL;
+	// ...
 }
 

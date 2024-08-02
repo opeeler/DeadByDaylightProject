@@ -1,28 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "StateMachine.h"
-#include "Net/UnrealNetwork.h"
 
-void UStateMachine::Server_SetStateStack_Implementation(const TArray<uint16>& netStateIDStack) {
-}
-bool UStateMachine::Server_SetStateStack_Validate(const TArray<uint16>& netStateIDStack) {
-    return true;
-}
+// Sets default values for this component's properties
+UStateMachine::UStateMachine()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-void UStateMachine::NetIDStackChanged() {
-}
-
-void UStateMachine::Multicast_SetStateStack_Implementation(const TArray<uint16>& netStateIDStack) {
-}
-bool UStateMachine::Multicast_SetStateStack_Validate(const TArray<uint16>& netStateIDStack) {
-    return true;
+	// ...
 }
 
-void UStateMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
-    DOREPLIFETIME(UStateMachine, _netStateIDStackInitial);
+
+// Called when the game starts
+void UStateMachine::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-UStateMachine::UStateMachine() {
-    this->_enableJoinInProgress = true;
+
+// Called every frame
+void UStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
 }
 

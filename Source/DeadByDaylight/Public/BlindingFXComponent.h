@@ -1,39 +1,28 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "BlindingFXComponent.generated.h"
 
-class UCurveFloat;
-class UPostProcessComponent;
-class UMaterialInstanceDynamic;
 
-UCLASS(BlueprintType, meta=(BlueprintSpawnableComponent))
-class DEADBYDAYLIGHT_API UBlindingFXComponent : public UActorComponent {
-    GENERATED_BODY()
-public:
-private:
-    UPROPERTY(EditAnywhere)
-    FName _blindnessIntensityParameter;
-    
-    UPROPERTY(EditAnywhere)
-    UCurveFloat* _blindnessMaterialCurve;
-    
-    UPROPERTY(EditAnywhere)
-    UCurveFloat* _blindnessCurve;
-    
-    UPROPERTY(Export)
-    UPostProcessComponent* _postProcess;
-    
-    UPROPERTY(Transient)
-    UMaterialInstanceDynamic* _postProcessMaterial;
-    
-public:
-    UBlindingFXComponent();
-    UFUNCTION(BlueprintCallable)
-    void SetPostProcessMaterial(UMaterialInstanceDynamic* value);
-    
-    UFUNCTION(BlueprintCallable)
-    void SetPostProcess(UPostProcessComponent* value);
-    
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class DEADBYDAYLIGHT_API UBlindingFXComponent : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+	// Sets default values for this component's properties
+	UBlindingFXComponent();
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+		
 };
-

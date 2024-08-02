@@ -1,34 +1,28 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "Tile.h"
-#include "Net/UnrealNetwork.h"
 
+// Sets default values
+ATile::ATile()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
 
-void ATile::OnRep_Initialized(bool oldValue) {
 }
 
-
-
-void ATile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
-    DOREPLIFETIME(ATile, _initialized);
+// Called when the game starts or when spawned
+void ATile::BeginPlay()
+{
+	Super::BeginPlay();
+	
 }
 
-ATile::ATile() {
-    this->RerunConstructionScript = false;
-    this->MinimumSpacing = 0;
-    this->MaximumSpacing = 0;
-    this->DiagonalSpacing = false;
-    this->TypeSpacing = false;
-    this->MaximumCount = 0;
-    this->Type = ETileType::None;
-    this->Density = EDensity::Unspecified;
-    this->Path = EPathType::None;
-    this->Number = 0;
-    this->PlaceHolder = false;
-    this->SpawnPriorityTier = 10;
-    this->Weight = 1.00f;
-    this->QuadrantSpawnType = EQuadrantSpawnType::None;
-    this->BasementType = EBasementType::None;
-    this->_initialized = false;
-}
+// Called every frame
+void ATile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 
+}
+void ATile::OnSetSpawnObject(UTileSpawnPoint* TileSpawnPoint, AActor* spawnedObject){}
+void ATile::OnRep_Initialized(bool oldValue){}
+void ATile::InitOnSpawned(){}

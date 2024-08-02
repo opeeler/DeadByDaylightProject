@@ -1,14 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "ZoneDetectorComponent.h"
 
-class UPrimitiveComponent;
-class AActor;
+// Sets default values for this component's properties
+UZoneDetectorComponent::UZoneDetectorComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-void UZoneDetectorComponent::OnOverlapExit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
+	// ...
 }
 
-void UZoneDetectorComponent::OnOverlapEnter(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+
+// Called when the game starts
+void UZoneDetectorComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-UZoneDetectorComponent::UZoneDetectorComponent() {
+
+// Called every frame
+void UZoneDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
 }
 

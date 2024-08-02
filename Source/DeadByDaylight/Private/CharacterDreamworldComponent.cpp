@@ -1,39 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "CharacterDreamworldComponent.h"
-#include "Net/UnrealNetwork.h"
 
-class UObject;
-class ADBDPlayer;
+// Sets default values for this component's properties
+UCharacterDreamworldComponent::UCharacterDreamworldComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-bool UCharacterDreamworldComponent::ShouldShowVignette() const {
-    return false;
+	// ...
 }
 
-void UCharacterDreamworldComponent::OnRep_IsInDreamworld(bool previous) {
+
+// Called when the game starts
+void UCharacterDreamworldComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-bool UCharacterDreamworldComponent::IsInDreamworld() const {
-    return false;
-}
 
-ADBDPlayer* UCharacterDreamworldComponent::GetLocallyObservedOrLocalCharacter(UObject* WorldContextObject) {
-    return NULL;
-}
+// Called every frame
+void UCharacterDreamworldComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-void UCharacterDreamworldComponent::FireWakeUpScoreEvent(ADBDPlayer* instigator) {
-}
-
-void UCharacterDreamworldComponent::Authority_SetIsInDreamworld(bool newValue, bool isScripted) {
-}
-
-void UCharacterDreamworldComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-    
-    DOREPLIFETIME(UCharacterDreamworldComponent, _isInDreamworld);
-}
-
-UCharacterDreamworldComponent::UCharacterDreamworldComponent() {
-    this->_mobileDreamworldPostProcessClass = NULL;
-    this->_isInDreamworld = false;
-    this->_mobileDreamworldPostProcess = NULL;
+	// ...
 }
 

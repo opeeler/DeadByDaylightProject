@@ -1,15 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "CharacterChaseVisualComponent.h"
 
-class ADBDPlayer;
+// Sets default values for this component's properties
+UCharacterChaseVisualComponent::UCharacterChaseVisualComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
-void UCharacterChaseVisualComponent::OnObservedCharacterChange(ADBDPlayer* player) {
+	// ...
 }
 
-void UCharacterChaseVisualComponent::OnAllChaseEnd() {
+
+// Called when the game starts
+void UCharacterChaseVisualComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
 }
 
-UCharacterChaseVisualComponent::UCharacterChaseVisualComponent() {
-    this->_vignetteMeshComp = NULL;
-    this->_fovModifyFactor = 100.00f;
+
+// Called every frame
+void UCharacterChaseVisualComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
 }
 

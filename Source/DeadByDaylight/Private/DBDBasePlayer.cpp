@@ -1,61 +1,37 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "DBDBasePlayer.h"
 
-class UAkComponent;
-class UCustomizedAudioComponent;
+// Sets default values
+ADBDBasePlayer::ADBDBasePlayer()
+{
+ 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
 
-bool ADBDBasePlayer::TeleportWithClothHandling(const FVector& location, const FRotator& rotation, bool checkCollisions) {
-    return false;
 }
 
-void ADBDBasePlayer::Multicast_SwapCosmetics_Implementation(FName cosmeticId) {
+// Called when the game starts or when spawned
+void ADBDBasePlayer::BeginPlay()
+{
+	Super::BeginPlay();
+	
 }
 
-bool ADBDBasePlayer::GetShowBlindDebugInfo() const {
-    return false;
+// Called every frame
+void ADBDBasePlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
 }
 
-FGameplayTagContainer ADBDBasePlayer::GetSemanticTag() const {
-    return FGameplayTagContainer{};
+// Called to bind functionality to input
+void ADBDBasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 }
 
-TEnumAsByte<EPhysicalSurface> ADBDBasePlayer::GetRightFootSurfaceType() const {
-    return SurfaceType_Default;
-}
-
-FString ADBDBasePlayer::GetRightFootAudioSurfaceName() const {
-    return TEXT("");
-}
-
-TEnumAsByte<EPhysicalSurface> ADBDBasePlayer::GetLeftFootSurfaceType() const {
-    return SurfaceType_Default;
-}
-
-FString ADBDBasePlayer::GetLeftFootAudioSurfaceName() const {
-    return TEXT("");
-}
-
-UCustomizedAudioComponent* ADBDBasePlayer::GetCustomizedAudio() const {
-    return NULL;
-}
-
-FName ADBDBasePlayer::GetCharacterName() const {
-    return NAME_None;
-}
-
-int32 ADBDBasePlayer::GetCharacterIndex() const {
-    return 0;
-}
-
-UAkComponent* ADBDBasePlayer::GetAudioComponent() const {
-    return NULL;
-}
-
-void ADBDBasePlayer::DBD_SwapCosmetics(FName cosmeticId) {
-}
-
-ADBDBasePlayer::ADBDBasePlayer() {
-    this->_leftFootGroundDetector = NULL;
-    this->_rightFootGroundDetector = NULL;
-    this->_characterIndex = 0;
-}
-
+bool ADBDBasePlayer::TeleportWithClothHandling(struct FVector Location, struct FRotator Rotation, bool checkCollisions){return false;}
+bool ADBDBasePlayer::GetShowBlindDebugInfo(){return false;}
+FName ADBDBasePlayer::GetCharacterName(){return "";}
+int ADBDBasePlayer::GetCharacterIndex(){return 0;}
